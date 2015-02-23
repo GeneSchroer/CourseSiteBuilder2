@@ -342,13 +342,7 @@ public class CourseSiteExporter {
     }
     
     // SETS THE COURSE PAGE BANNER
-    private void setBanner(Document doc, Course courseToExport) {
-        
-     // Node test = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_NAVBAR);
-       //String bannerText1 = courseToExport.getSubject().toString() + " " + courseToExport.getNumber() + " " + DASH + " " 
-               //+ courseToExport.getSemester().toString() + " " + courseToExport.getYear();
-               //test.setTextContent(bannerText1);
-                
+    private void setBanner(Document doc, Course courseToExport) {              
         Node bannerNode = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_BANNER);
         // Gene: Added Semester and Year
         String bannerText = courseToExport.getSubject().toString() + " " + courseToExport.getNumber() + " " + DASH + " " 
