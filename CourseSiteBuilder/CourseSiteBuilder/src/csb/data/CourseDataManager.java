@@ -3,6 +3,7 @@ package csb.data;
 import csb.file.CourseFileManager;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Year;
 
 /**
  * This class manages a Course, which means it knows how to
@@ -26,6 +27,7 @@ public class CourseDataManager {
     static int      DEFAULT_NUM = 0;
     static String   DEFAULT_TEXT = "Unknown";
     static Semester DEFAULT_SEMESTER = Semester.FALL;
+    static int      DEFAULT_YEAR = Year.now().getValue();
     
     public CourseDataManager(   CourseDataView initView,
                                 Instructor lastInstructor) {
@@ -57,7 +59,7 @@ public class CourseDataManager {
         course.setSubject(DEFAULT_COURSE_SUBJECT);
         course.setNumber(DEFAULT_NUM);
         course.setSemester(DEFAULT_SEMESTER);
-       // course.setYear(DEFAULT_YEAR);
+        course.setYear(DEFAULT_YEAR);
         course.setTitle(DEFAULT_TEXT);
         LocalDate nextMonday = getNextMonday();
         course.setStartingMonday(nextMonday);

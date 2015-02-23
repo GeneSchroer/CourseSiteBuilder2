@@ -19,7 +19,7 @@
         
         <!-- TOOLTIPS FOR BUTTONS -->
         <property name="NEW_COURSE_TOOLTIP"    value="Create a New Course"></property>
-        <property name="LOAD_COURSE_TOOLTIP"   value="Load and Existing Course"></property>
+        <property name="LOAD_COURSE_TOOLTIP"   value="Load an Existing Course"></property>
         <property name="SAVE_COURSE_TOOLTIP"   value="Save this Course"></property>
         <property name="VIEW_SCHEDULE_TOOLTIP" value="View the Schedule Page"></property>
         <property name="EXPORT_PAGE_TOOLTIP"   value="Export the Schedule Page"></property>
@@ -32,6 +32,7 @@
         <property name="COURSE_SUBJECT_LABEL"           value="Subject:"></property>
         <property name="COURSE_NUMBER_LABEL"            value="Number:"></property>
         <property name="COURSE_SEMESTER_LABEL"          value="Semester:"></property>
+        <property name="COURSE_YEAR_LABEL"              value="Year"></property>
         <property name="COURSE_TITLE_LABEL"             value="Title:"></property>
         <property name="INSTRUCTOR_NAME_LABEL"          value="Instrctor Name:"></property>
         <property name="INSTRUCTOR_URL_LABEL"           value="Instructor Homepage:"></property>

@@ -155,6 +155,7 @@ public class FileController {
                 // GO AHEAD AND PROCEED LOADING A Course
                 promptToOpen(gui);
             }
+            gui.updateToolbarControls(false);
         } catch (IOException ioe) {
             // SOMETHING WENT WRONG
             errorHandler.handleLoadCourseError();
@@ -311,10 +312,13 @@ public class FileController {
                 // NOTE THAT WE HAVE NOW LOADED THE COURSE, BUT IT IS NOT
                 // LOADED INTO THE GUI. YOU WILL HAVE TO DO THAT
                 
+                
                 saved = true;
                 gui.updateToolbarControls(saved);
+                gui.reloadCourse(courseToLoad);
                 Instructor lastInstructor = courseToLoad.getInstructor();
                 courseIO.saveLastInstructor(lastInstructor, JSON_FILE_PATH_LAST_INSTRUCTOR);
+                
             } catch (Exception e) {
                 ErrorHandler eH = ErrorHandler.getErrorHandler();
                 eH.handleLoadCourseError();

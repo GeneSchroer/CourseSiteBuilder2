@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -89,6 +90,7 @@ public class JsonCourseFileManager implements CourseFileManager {
                                     .add(JSON_SUBJECT, courseToSave.getSubject().toString())
                                     .add(JSON_NUMBER, courseToSave.getNumber())
                                     .add(JSON_SEMESTER, courseToSave.getSemester().toString())
+                                    .add(JSON_YEAR, courseToSave.getYear())
                                     .add(JSON_TITLE, courseToSave.getTitle())
                                     .add(JSON_PAGES, pagesJsonArray)
                                     .add(JSON_INSTRUCTOR, instructorJsonObject)
@@ -115,9 +117,14 @@ public class JsonCourseFileManager implements CourseFileManager {
         JsonObject json = loadJSONFile(jsonFilePath);
         
         // NOW LOAD THE COURSE
+       // String s = json.getString(JSON_SUBJECT);
+        //s = s.substring(1, s.length()-1);
         courseToLoad.setSubject(Subject.valueOf(json.getString(JSON_SUBJECT)));
         courseToLoad.setNumber(json.getInt(JSON_NUMBER));
+       // s = json.getString(JSON_SEMESTER);
+       // s = s.substring(1, s.length()-1);
         courseToLoad.setSemester(Semester.valueOf(json.getString(JSON_SEMESTER)));
+        courseToLoad.setYear(json.getInt(JSON_YEAR));
         courseToLoad.setTitle(json.getString(JSON_TITLE));
         
         // GET THE PAGES TO INCLUDE 

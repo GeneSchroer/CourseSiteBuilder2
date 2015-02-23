@@ -16,6 +16,7 @@ import csb.file.CourseSiteExporter;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -294,6 +295,7 @@ public class CSB_GUI implements CourseDataView {
         courseSubjectComboBox.setValue(courseToReload.getSubject());
         courseNumberTextField.setText("" + courseToReload.getNumber());
         courseSemesterComboBox.setValue(courseToReload.getSemester());
+        courseYearComboBox.setValue(courseToReload.getYear());
         courseTitleTextField.setText(courseToReload.getTitle());
         instructorNameTextField.setText(courseToReload.getInstructor().getName());
         instructorURLTextField.setText(courseToReload.getInstructor().getHomepageURL());
@@ -349,6 +351,7 @@ public class CSB_GUI implements CourseDataView {
         course.setSubject(Subject.valueOf(courseSubjectComboBox.getSelectionModel().getSelectedItem().toString()));
         course.setNumber(Integer.parseInt(courseNumberTextField.getText()));
         course.setSemester(Semester.valueOf(courseSemesterComboBox.getSelectionModel().getSelectedItem().toString()));
+        course.setYear(Integer.parseInt(courseYearComboBox.getSelectionModel().getSelectedItem().toString()));
         course.setTitle(courseTitleTextField.getText());
         Instructor instructor = course.getInstructor();
         instructor.setName(instructorNameTextField.getText());
@@ -382,7 +385,7 @@ public class CSB_GUI implements CourseDataView {
         // START AS ENABLED (false), WHILE OTHERS DISABLED (true)
         newCourseButton = initChildButton(fileToolbarPane, CSB_PropertyType.NEW_COURSE_ICON, CSB_PropertyType.NEW_COURSE_TOOLTIP, false);
         saveCourseButton = initChildButton(fileToolbarPane, CSB_PropertyType.SAVE_COURSE_ICON, CSB_PropertyType.SAVE_COURSE_TOOLTIP, true);
-       
+        loadCourseButton = initChildButton(fileToolbarPane, CSB_PropertyType.LOAD_COURSE_ICON, CSB_PropertyType.LOAD_COURSE_TOOLTIP, false);
         exportSiteButton = initChildButton(fileToolbarPane, CSB_PropertyType.EXPORT_PAGE_ICON, CSB_PropertyType.EXPORT_PAGE_TOOLTIP, true);
         exitButton = initChildButton(fileToolbarPane, CSB_PropertyType.EXIT_ICON, CSB_PropertyType.EXIT_TOOLTIP, false);
     }
@@ -458,6 +461,10 @@ public class CSB_GUI implements CourseDataView {
         courseSemesterComboBox = initGridComboBox(courseInfoPane, 1, 2, 1, 1);
         loadSemesterComboBox(semesters);
         
+        // Gene: THEN CONTROLS FOR CHOOSING THE YEAR
+        courseYearLabel = initGridLabel(courseInfoPane, CSB_PropertyType.COURSE_YEAR_LABEL, CLASS_PROMPT_LABEL, 2, 2, 1,1);
+        courseYearComboBox = initGridComboBox(courseInfoPane, 3, 2, 1, 1);
+        loadYearComboBox();
         // THEN THE COURSE TITLE
         courseTitleLabel = initGridLabel(courseInfoPane, CSB_PropertyType.COURSE_TITLE_LABEL, CLASS_PROMPT_LABEL, 0, 3, 1, 1);
         courseTitleTextField = initGridTextField(courseInfoPane, LARGE_TEXT_FIELD_LENGTH, EMPTY_TEXT, true, 1, 3, 3, 1);
@@ -565,6 +572,9 @@ public class CSB_GUI implements CourseDataView {
         saveCourseButton.setOnAction(e -> {
             fileController.handleSaveCourseRequest(this, dataManager.getCourse());
         });
+        loadCourseButton.setOnAction(e -> {
+             fileController.handleLoadCourseRequest(this);
+        });        
         exportSiteButton.setOnAction(e -> {
             fileController.handleExportCourseRequest(this);
         });
@@ -578,6 +588,9 @@ public class CSB_GUI implements CourseDataView {
             courseController.handleCourseChangeRequest(this);
         });
         courseSemesterComboBox.setOnAction(e->{
+            courseController.handleCourseChangeRequest(this);
+        });
+        courseYearComboBox.setOnAction(e ->{
             courseController.handleCourseChangeRequest(this);
         });
         indexPageCheckBox.setOnAction(e -> {
@@ -682,13 +695,21 @@ public class CSB_GUI implements CourseDataView {
     // LOAD THE COMBO BOX TO HOLD Course SUBJECTS
     private void loadSubjectComboBox(ArrayList<String> subjects) {
         for (String s : subjects) {
+            s = s.substring(1, s.length()-1);
             courseSubjectComboBox.getItems().add(s);
         }
     }
+    // Gene: LOAD THE COMBO BOX TO HOLD Course SEMESTERS
     private void loadSemesterComboBox(ArrayList<String> semesters) {
         for (String s : semesters) {
+            s = s.substring(1, s.length()-1);
             courseSemesterComboBox.getItems().add(s);
         }
+    }
+    // Gene: LOAD THE COMBO BOX TO HOLD Course YEAR
+    private void loadYearComboBox() {
+        courseYearComboBox.getItems().add(Year.now().getValue());
+        courseYearComboBox.getItems().add(Year.now().getValue()+1);
     }
     // INIT A TEXT FIELD AND PUT IT IN A GridPane
     private TextField initGridTextField(GridPane container, int size, String initText, boolean editable, int col, int row, int colSpan, int rowSpan) {

@@ -11,6 +11,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.text.html.HTML;
 import javax.xml.parsers.DocumentBuilder;
@@ -70,6 +71,7 @@ public class CourseSiteExporter {
 
     // THESE ARE THE POSSIBLE SITE PAGES OUR SCHEDULE PAGE
     // MAY NEED TO LINK TO
+    public static String BASE_PAGE = "http://www3.cs.stonybrook.edu/~cse219/Section02/";
     public static String INDEX_PAGE = "index.html";
     public static String SYLLABUS_PAGE = "syllabus.html";
     public static String SCHEDULE_PAGE = "schedule.html";
@@ -200,6 +202,8 @@ public class CourseSiteExporter {
         titleNode.setTextContent(courseToExport.getSubject() + " "
                 + courseToExport.getNumber());
 
+        //Gene: SET THE NAVBAR
+        
         // SET THE BANNER
         setBanner(scheduleDoc, courseToExport);
 
@@ -240,7 +244,7 @@ public class CourseSiteExporter {
         }
     }
 
-    // APPENDS THE ISNTRUCTOR TO THE BOTTOM OF THE PAGE
+    // APPENDS THE INSTRUCTOR TO THE BOTTOM OF THE PAGE
     private void appendInstructor(Document pageDoc, Instructor courseInstructor) {
         Node instructorSpan = (Element)getNodeWithId(pageDoc, HTML.Tag.SPAN.toString(), ID_INSTRUCTOR_LINK);
         Element instructorLinkElement = pageDoc.createElement(HTML.Tag.A.toString());
@@ -264,24 +268,48 @@ public class CourseSiteExporter {
             addDayOfWeekHeader(scheduleDoc, dowRowHeaderElement, WEDNESDAY_HEADER);
             addDayOfWeekHeader(scheduleDoc, dowRowHeaderElement, THURSDAY_HEADER);
             addDayOfWeekHeader(scheduleDoc, dowRowHeaderElement, FRIDAY_HEADER);
-
+            Element dowRowCellElement = scheduleDoc.createElement(HTML.Tag.TR.toString());
+            addDayOfWeekCell(scheduleDoc, dowRowCellElement, formatedDate(0, countingDate));
+            addDayOfWeekCell(scheduleDoc, dowRowCellElement, formatedDate(1, countingDate));
+            addDayOfWeekCell(scheduleDoc, dowRowCellElement, formatedDate(2, countingDate));
+            addDayOfWeekCell(scheduleDoc, dowRowCellElement, formatedDate(3, countingDate));
+            addDayOfWeekCell(scheduleDoc, dowRowCellElement, formatedDate(4, countingDate));
             // ADVANCE THE COUNTING DATE BY ONE WEEK
             countingDate = countingDate.plusDays(7);
             
             // AND PUT IT IN THE TABLE
             Node scheduleTableNode = getNodeWithId(scheduleDoc, HTML.Tag.TABLE.toString(), ID_SCHEDULE);
             scheduleTableNode.appendChild(dowRowHeaderElement);
+            scheduleTableNode.appendChild(dowRowCellElement);
+            
+            
         }
     }
-
+    //Gene
+    //Formats a date into string with a MONTH/DAY format, and adds extra days to the date.
+    private String formatedDate(int extraDays, LocalDate date){
+        return date.plusDays(extraDays).format(DateTimeFormatter.ofPattern("MM/dd"));
+        
+    }
+    
+    
     // ADDS A DAY OF WEEK HEADER TO THE SCHEDULE PAGE SCHEDULE TABLE
     private void addDayOfWeekHeader(Document scheduleDoc, Element tableRow, String dayOfWeekText) {
         Element dayOfWeekHeader = scheduleDoc.createElement(HTML.Tag.TH.toString());
         dayOfWeekHeader.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
         dayOfWeekHeader.setTextContent(dayOfWeekText);
         tableRow.appendChild(dayOfWeekHeader);
+        
     }
-
+    
+    private void addDayOfWeekCell(Document scheduleDoc, Element tableRow, String dateText){
+        Element dayOfWeekCell = scheduleDoc.createElement(HTML.Tag.TD.toString());
+        dayOfWeekCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
+        dayOfWeekCell.setTextContent(dateText);
+        tableRow.appendChild(dayOfWeekCell);
+        
+    }
+    
     // FINDS AND RETURNS A NODE IN A DOCUMENT OF A CERTAIN TYPE WITH A CERTIAN ID
     private Node getNodeWithId(Document doc, String tagType, String searchID) {
         NodeList divNodes = doc.getElementsByTagName(tagType);
@@ -307,12 +335,29 @@ public class CourseSiteExporter {
         transformer.transform(source, result);
     }
 
+    private void setNavbar(Document doc, Course courseToExport ){
+        //if(courseToExport.)
+       // Node test = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_NAVBAR);
+    }
+    
     // SETS THE COURSE PAGE BANNER
     private void setBanner(Document doc, Course courseToExport) {
+        
+     // Node test = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_NAVBAR);
+       //String bannerText1 = courseToExport.getSubject().toString() + " " + courseToExport.getNumber() + " " + DASH + " " 
+               //+ courseToExport.getSemester().toString() + " " + courseToExport.getYear();
+               //test.setTextContent(bannerText1);
+                
         Node bannerNode = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_BANNER);
-        String bannerText = courseToExport.getSubject().toString() + " " + courseToExport.getNumber();
+        // Gene: Added Semester and Year
+        String bannerText = courseToExport.getSubject().toString() + " " + courseToExport.getNumber() + " " + DASH + " " 
+                + courseToExport.getSemester().toString() + " " + courseToExport.getYear();
         bannerText += LINE_BREAK + courseToExport.getTitle();
         bannerNode.setTextContent(bannerText);
+        bannerNode.appendChild(getNodeWithId(doc,LINE_BREAK,ID_BANNER));
+        bannerText = courseToExport.getTitle();
+        Node bannerNode2 = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_BANNER);
+        bannerNode2.setTextContent(bannerText);
     }
     
     // USED FOR GETTING THE PAGE LINKS FOR PAGE LINKS IN THE NAVBAR
