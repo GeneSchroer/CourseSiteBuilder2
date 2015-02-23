@@ -354,10 +354,6 @@ public class CourseSiteExporter {
                 + courseToExport.getSemester().toString() + " " + courseToExport.getYear();
         bannerText += LINE_BREAK + courseToExport.getTitle();
         bannerNode.setTextContent(bannerText);
-        bannerNode.appendChild(getNodeWithId(doc,LINE_BREAK,ID_BANNER));
-        bannerText = courseToExport.getTitle();
-        Node bannerNode2 = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_BANNER);
-        bannerNode2.setTextContent(bannerText);
     }
     
     // USED FOR GETTING THE PAGE LINKS FOR PAGE LINKS IN THE NAVBAR
