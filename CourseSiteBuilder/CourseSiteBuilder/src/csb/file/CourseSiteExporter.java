@@ -85,7 +85,7 @@ public class CourseSiteExporter {
     // AND SOME TEXT WE'LL NEED TO ADD ON THE FLY
     public static final String SLASH = "/";
     public static final String DASH = " - ";
-    public static final String LINE_BREAK = "<br />";
+    public static final String LINE_BREAK = "<br>";
 
     // THESE ARE THE DIRECTORIES WHERE OUR BASE SCHEDULE
     // FILE IS AND WHERE OUR COURSE SITES WILL BE EXPORTED TO
@@ -336,6 +336,7 @@ public class CourseSiteExporter {
     }
 
     private void setNavbar(Document doc, Course courseToExport ){
+        
         //if(courseToExport.)
        // Node test = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_NAVBAR);
     }
@@ -352,8 +353,18 @@ public class CourseSiteExporter {
         // Gene: Added Semester and Year
         String bannerText = courseToExport.getSubject().toString() + " " + courseToExport.getNumber() + " " + DASH + " " 
                 + courseToExport.getSemester().toString() + " " + courseToExport.getYear();
-        bannerText += LINE_BREAK + courseToExport.getTitle();
+        
+        //Gene: Changes here
+        //bannerNode.
         bannerNode.setTextContent(bannerText);
+        String s = LINE_BREAK.substring(1, LINE_BREAK.length()-1);
+        bannerText = courseToExport.getTitle();
+        
+        Element bannerNode2 = doc.createElement(HTML.Tag.TH.toString());
+        bannerNode.appendChild(doc.createElement(s));
+        bannerNode.appendChild(bannerNode2);
+        bannerNode2.setTextContent(bannerText);
+        
     }
     
     // USED FOR GETTING THE PAGE LINKS FOR PAGE LINKS IN THE NAVBAR
