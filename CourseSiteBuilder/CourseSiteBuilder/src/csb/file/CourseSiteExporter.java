@@ -336,27 +336,23 @@ public class CourseSiteExporter {
     }
 
     private void setNavbar(Document doc, Course courseToExport ){
-        
-        
-        
-        Element a = doc.createElement(HTML.Tag.A.toString());
-        a.setAttribute("HREF", "www.google.com");
-        a.setAttribute("class", "nav");
-        Element b = doc.createElement(HTML.Tag.A.toString());
-        b.setAttribute("HREF", "www.google.com");
-        b.setAttribute("class", "nav");
-        
-        Element c = doc.createElement(HTML.Tag.A.toString());
-        c.setAttribute("HREF", "www.google.com");
-        c.setAttribute("class", "open_nav");
-        
         Node test = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_NAVBAR);
-        test.appendChild(a);
-        test.appendChild(b);
-        test.appendChild(c);
-        a.setTextContent("Test");
-        b.setTextContent("Test2");
-        c.setTextContent("Test3");
+
+       // courseToExport.getPages().get(1).
+        List<CoursePage> list = courseToExport.getPages();
+        for(int i = 0;i<courseToExport.getPages().size()-1;++i)
+        {
+           String temp = getLink(list.get(i));
+           Element a = doc.createElement(HTML.Tag.A.toString());
+           a.setAttribute("HREF", temp);
+           a.setAttribute("class", "nav");
+           test.appendChild(a);
+           a.setTextContent(list.get(i).name());
+        }
+        
+        
+        
+       
        
     }
     
