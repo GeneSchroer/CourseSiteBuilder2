@@ -203,7 +203,7 @@ public class CourseSiteExporter {
                 + courseToExport.getNumber());
 
         //Gene: SET THE NAVBAR
-        
+        setNavbar(scheduleDoc, courseToExport);
         // SET THE BANNER
         setBanner(scheduleDoc, courseToExport);
 
@@ -337,12 +337,33 @@ public class CourseSiteExporter {
 
     private void setNavbar(Document doc, Course courseToExport ){
         
-        //if(courseToExport.)
-       // Node test = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_NAVBAR);
+        
+        
+        Element a = doc.createElement(HTML.Tag.A.toString());
+        a.setAttribute("HREF", "www.google.com");
+        a.setAttribute("class", "nav");
+        Element b = doc.createElement(HTML.Tag.A.toString());
+        b.setAttribute("HREF", "www.google.com");
+        b.setAttribute("class", "nav");
+        
+        Element c = doc.createElement(HTML.Tag.A.toString());
+        c.setAttribute("HREF", "www.google.com");
+        c.setAttribute("class", "open_nav");
+        
+        Node test = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_NAVBAR);
+        test.appendChild(a);
+        test.appendChild(b);
+        test.appendChild(c);
+        a.setTextContent("Test");
+        b.setTextContent("Test2");
+        c.setTextContent("Test3");
+       
     }
     
     // SETS THE COURSE PAGE BANNER
-    private void setBanner(Document doc, Course courseToExport) {              
+    private void setBanner(Document doc, Course courseToExport) {
+        
+                
         Node bannerNode = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_BANNER);
         // Gene: Added Semester and Year
         String bannerText = courseToExport.getSubject().toString() + " " + courseToExport.getNumber() + " " + DASH + " " 
@@ -353,12 +374,9 @@ public class CourseSiteExporter {
         bannerNode.setTextContent(bannerText);
         String s = LINE_BREAK.substring(1, LINE_BREAK.length()-1);
         bannerText = courseToExport.getTitle();
-        
-        Element bannerNode2 = doc.createElement(HTML.Tag.TH.toString());
-        bannerNode.appendChild(doc.createElement(s));
+        Node bannerNode2 = doc.createElement(s);
         bannerNode.appendChild(bannerNode2);
         bannerNode2.setTextContent(bannerText);
-        
     }
     
     // USED FOR GETTING THE PAGE LINKS FOR PAGE LINKS IN THE NAVBAR
