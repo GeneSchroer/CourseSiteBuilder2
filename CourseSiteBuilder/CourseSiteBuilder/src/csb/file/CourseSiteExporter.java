@@ -268,12 +268,13 @@ public class CourseSiteExporter {
             addDayOfWeekHeader(scheduleDoc, dowRowHeaderElement, WEDNESDAY_HEADER);
             addDayOfWeekHeader(scheduleDoc, dowRowHeaderElement, THURSDAY_HEADER);
             addDayOfWeekHeader(scheduleDoc, dowRowHeaderElement, FRIDAY_HEADER);
+           // Gene: AND ADD DAY OF WEEK BODY CELLS FOR TABLE
             Element dowRowCellElement = scheduleDoc.createElement(HTML.Tag.TR.toString());
-            addDayOfWeekCell(scheduleDoc, dowRowCellElement, formatedDate(0, countingDate));
-            addDayOfWeekCell(scheduleDoc, dowRowCellElement, formatedDate(1, countingDate));
-            addDayOfWeekCell(scheduleDoc, dowRowCellElement, formatedDate(2, countingDate));
-            addDayOfWeekCell(scheduleDoc, dowRowCellElement, formatedDate(3, countingDate));
-            addDayOfWeekCell(scheduleDoc, dowRowCellElement, formatedDate(4, countingDate));
+            addDayOfWeekCell(scheduleDoc, dowRowCellElement, getFormatedDate(0, countingDate));
+            addDayOfWeekCell(scheduleDoc, dowRowCellElement, getFormatedDate(1, countingDate));
+            addDayOfWeekCell(scheduleDoc, dowRowCellElement, getFormatedDate(2, countingDate));
+            addDayOfWeekCell(scheduleDoc, dowRowCellElement, getFormatedDate(3, countingDate));
+            addDayOfWeekCell(scheduleDoc, dowRowCellElement, getFormatedDate(4, countingDate));
             // ADVANCE THE COUNTING DATE BY ONE WEEK
             countingDate = countingDate.plusDays(7);
             
@@ -286,8 +287,9 @@ public class CourseSiteExporter {
         }
     }
     //Gene
-    //Formats a date into string with a MONTH/DAY format, and adds extra days to the date.
-    private String formatedDate(int extraDays, LocalDate date){
+    //Formats a LocalDate into string with a MONTH/DAY format,
+    // and adds extra days to the date if desired.
+    private String getFormatedDate(int extraDays, LocalDate date){
         return date.plusDays(extraDays).format(DateTimeFormatter.ofPattern("MM/dd"));
         
     }
@@ -301,7 +303,8 @@ public class CourseSiteExporter {
         tableRow.appendChild(dayOfWeekHeader);
         
     }
-    
+    // Gene:
+    // ADDS A DAY OF WEEK BODY CELL TO THE SCHEDULE PAGE SCHEDULE TABLE
     private void addDayOfWeekCell(Document scheduleDoc, Element tableRow, String dateText){
         Element dayOfWeekCell = scheduleDoc.createElement(HTML.Tag.TD.toString());
         dayOfWeekCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
@@ -334,26 +337,40 @@ public class CourseSiteExporter {
         Source source = new DOMSource(doc);
         transformer.transform(source, result);
     }
-
+    // SETS THE COURSE PAGE NAVBAR, INCLUDING SELECTED LINKS
+    
+    
+    // NOTE: DUE TO HOW THE CSB_GUI CLASS 
+    // ADDS PAGES, THE LINKS ARE DISPLAYED 
+    // IN THE ORDER THEY ARE CHECKED
+    // 
     private void setNavbar(Document doc, Course courseToExport ){
-        Node test = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_NAVBAR);
-
-       // courseToExport.getPages().get(1).
+        
+        Node baseNode = getNodeWithId(doc, HTML.Tag.DIV.toString(), ID_NAVBAR);
+        
+        // First we get the pages that have been checked
         List<CoursePage> list = courseToExport.getPages();
-        for(int i = 0;i<courseToExport.getPages().size()-1;++i)
+        int listSize = list.size();
+        //Then we create the nodes and appropriate links on the navbar
+        for(int i = 0;i<listSize;++i)
         {
-           String temp = getLink(list.get(i));
-           Element a = doc.createElement(HTML.Tag.A.toString());
-           a.setAttribute("HREF", temp);
-           a.setAttribute("class", "nav");
-           test.appendChild(a);
-           a.setTextContent(list.get(i).name());
-        }
-        
-        
-        
-       
-       
+            String pageLink = getLink(list.get(i));
+            Element linkNode = doc.createElement(HTML.Tag.A.toString());
+            linkNode.setAttribute("HREF", BASE_PAGE + pageLink);
+            //Schedule link should have a different format than other links
+            if(list.get(i).name().compareToIgnoreCase("SCHEDULE")==0)
+                linkNode.setAttribute("class", CLASS_OPEN_NAV);
+            else
+                linkNode.setAttribute("class", CLASS_NAV);
+            
+            //Sets each link's label on navbar to upper case for first letter 
+            // and lower case for rest. Kinda messy.
+            String linkLabel = list.get(i).toString().substring(0,1).toUpperCase()
+                    + list.get(i).toString().substring(1).toLowerCase();
+           
+            baseNode.appendChild(linkNode);
+            linkNode.setTextContent(linkLabel);
+        }       
     }
     
     // SETS THE COURSE PAGE BANNER
@@ -365,8 +382,7 @@ public class CourseSiteExporter {
         String bannerText = courseToExport.getSubject().toString() + " " + courseToExport.getNumber() + " " + DASH + " " 
                 + courseToExport.getSemester().toString() + " " + courseToExport.getYear();
         
-        //Gene: Changes here
-        //bannerNode.
+        //Gene: Altered to create an actual line on banner.
         bannerNode.setTextContent(bannerText);
         String s = LINE_BREAK.substring(1, LINE_BREAK.length()-1);
         bannerText = courseToExport.getTitle();

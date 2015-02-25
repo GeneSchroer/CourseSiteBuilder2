@@ -117,13 +117,9 @@ public class JsonCourseFileManager implements CourseFileManager {
         JsonObject json = loadJSONFile(jsonFilePath);
         
         // NOW LOAD THE COURSE
-       // String s = json.getString(JSON_SUBJECT);
-        //s = s.substring(1, s.length()-1);
         courseToLoad.setSubject(Subject.valueOf(json.getString(JSON_SUBJECT)));
         courseToLoad.setNumber(json.getInt(JSON_NUMBER));
-       // s = json.getString(JSON_SEMESTER);
-       // s = s.substring(1, s.length()-1);
-        courseToLoad.setSemester(Semester.valueOf(json.getString(JSON_SEMESTER)));
+//        courseToLoad.setSemester(Semester.valueOf(json.getString(JSON_SEMESTER)));
         courseToLoad.setYear(json.getInt(JSON_YEAR));
         courseToLoad.setTitle(json.getString(JSON_TITLE));
         
@@ -213,7 +209,7 @@ public class JsonCourseFileManager implements CourseFileManager {
     
      /**
      * Loads semesters from the json file.
-     * @param jsonFilePath Json file containing the subjects.
+     * @param jsonFilePath Json file containing the semesters.
      * @return List full of Semesters loaded from the file.
      * @throws IOException Thrown when I/O fails.
      */

@@ -294,8 +294,12 @@ public class CSB_GUI implements CourseDataView {
         // FIRST LOAD ALL THE BASIC COURSE INFO
         courseSubjectComboBox.setValue(courseToReload.getSubject());
         courseNumberTextField.setText("" + courseToReload.getNumber());
+     
+        //Gene: Added functionality for Semester and Year
         courseSemesterComboBox.setValue(courseToReload.getSemester());
         courseYearComboBox.setValue(courseToReload.getYear());
+        
+        
         courseTitleTextField.setText(courseToReload.getTitle());
         instructorNameTextField.setText(courseToReload.getInstructor().getName());
         instructorURLTextField.setText(courseToReload.getInstructor().getHomepageURL());
@@ -350,8 +354,11 @@ public class CSB_GUI implements CourseDataView {
     public void updateCourseInfo(Course course) {
         course.setSubject(Subject.valueOf(courseSubjectComboBox.getSelectionModel().getSelectedItem().toString()));
         course.setNumber(Integer.parseInt(courseNumberTextField.getText()));
+        
+        //Gene: Added functionality for Semester and Year
         course.setSemester(Semester.valueOf(courseSemesterComboBox.getSelectionModel().getSelectedItem().toString()));
         course.setYear(Integer.parseInt(courseYearComboBox.getSelectionModel().getSelectedItem().toString()));
+        
         course.setTitle(courseTitleTextField.getText());
         Instructor instructor = course.getInstructor();
         instructor.setName(instructorNameTextField.getText());
@@ -456,7 +463,7 @@ public class CSB_GUI implements CourseDataView {
         courseNumberLabel = initGridLabel(courseInfoPane, CSB_PropertyType.COURSE_NUMBER_LABEL, CLASS_PROMPT_LABEL, 2, 1, 1, 1);
         courseNumberTextField = initGridTextField(courseInfoPane, SMALL_TEXT_FIELD_LENGTH, EMPTY_TEXT, true, 3, 1, 1, 1);
         
-        // Gene: THEN CONTROLS FOR CHOOSING THE SUBJECT
+        // Gene: THEN CONTROLS FOR CHOOSING THE SEMESTER
         courseSemesterLabel = initGridLabel(courseInfoPane, CSB_PropertyType.COURSE_SEMESTER_LABEL, CLASS_PROMPT_LABEL, 0, 2, 1, 1);
         courseSemesterComboBox = initGridComboBox(courseInfoPane, 1, 2, 1, 1);
         loadSemesterComboBox(semesters);
@@ -465,6 +472,7 @@ public class CSB_GUI implements CourseDataView {
         courseYearLabel = initGridLabel(courseInfoPane, CSB_PropertyType.COURSE_YEAR_LABEL, CLASS_PROMPT_LABEL, 2, 2, 1,1);
         courseYearComboBox = initGridComboBox(courseInfoPane, 3, 2, 1, 1);
         loadYearComboBox();
+        
         // THEN THE COURSE TITLE
         courseTitleLabel = initGridLabel(courseInfoPane, CSB_PropertyType.COURSE_TITLE_LABEL, CLASS_PROMPT_LABEL, 0, 3, 1, 1);
         courseTitleTextField = initGridTextField(courseInfoPane, LARGE_TEXT_FIELD_LENGTH, EMPTY_TEXT, true, 1, 3, 3, 1);
