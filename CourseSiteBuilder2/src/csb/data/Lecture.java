@@ -19,11 +19,11 @@ import javafx.beans.property.StringProperty;
  *
  * @author McKillaGorilla
  */
-public class Lecture {
+public class Lecture{
     final StringProperty topic;
     final IntegerProperty sessions;
     public static final String DEFAULT_TOPIC = "<ENTER TOPIC>";
-    public static final int DEFAULT_SESSIONS = 1;    
+    public static final int DEFAULT_SESSIONS = 9;    
     
     public Lecture() {
         topic = new SimpleStringProperty(DEFAULT_TOPIC);
@@ -47,6 +47,7 @@ public class Lecture {
         return topic;
     }
     
+    // return number of sessions
     public int getSessions() {
         return sessions.get();
     }

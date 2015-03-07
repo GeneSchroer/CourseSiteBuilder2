@@ -10,6 +10,7 @@ import csb.data.CoursePage;
 import csb.controller.FileController;
 import csb.controller.ScheduleEditController;
 import csb.data.Instructor;
+import csb.data.Lecture;
 import csb.data.ScheduleItem;
 import csb.data.Semester;
 import csb.data.Subject;
@@ -181,12 +182,32 @@ public class CSB_GUI implements CourseDataView {
     TableColumn itemDatesColumn;
     TableColumn linkColumn;
     
+    
+    
+    
+    // Gene: This handles lecture items
+    VBox lecturesBox;
+    HBox lecturesToolbar;
+    Button addLecturesButton;
+    Button removeLecturesButton;
+    Button moveUpLecturesButton;
+    Button moveDownLecturesButton;
+    Label lecturesLabel;
+    TableView<Lecture> lecturesTable;
+    TableColumn lecturesTopicColumn;
+    TableColumn lecturesSessionsColumn;
+    
+    
+    
+    
+    
+    
     // AND TABLE COLUMNS
     static final String COL_DESCRIPTION = "Description";
     static final String COL_DATE = "Date";
     static final String COL_LINK = "Link";
     static final String COL_TOPIC = "Topic";
-    static final String COL_SESSIONS = "Number of Sessions";
+    static final String COL_SESSIONS = "# of Sessions";
     static final String COL_NAME = "Name";
     static final String COL_TOPICS = "Topics";
     
@@ -618,6 +639,31 @@ public class CSB_GUI implements CourseDataView {
         scheduleItemsTable.getColumns().add(linkColumn);
         scheduleItemsTable.setItems(dataManager.getCourse().getScheduleItems());
           
+        
+        // Now the controls for adding schedule items
+        lecturesBox = new VBox();
+        lecturesToolbar = new HBox();
+        lecturesLabel = initLabel(CSB_PropertyType.LECTURES_HEADING_LABEL, CLASS_SUBHEADING_LABEL);
+        addLecturesButton = initChildButton(lecturesToolbar, CSB_PropertyType.ADD_ICON, CSB_PropertyType.ADD_LECTURE_TOOLTIP, false);
+        removeLecturesButton = initChildButton(lecturesToolbar, CSB_PropertyType.MINUS_ICON, CSB_PropertyType.REMOVE_LECTURE_TOOLTIP, false);
+        moveUpLecturesButton = initChildButton(lecturesToolbar, CSB_PropertyType.MOVE_UP_ICON, CSB_PropertyType.MOVE_UP_LECTURE_TOOLTIP, false);
+        moveDownLecturesButton = initChildButton(lecturesToolbar, CSB_PropertyType.MOVE_DOWN_ICON, CSB_PropertyType.MOVE_DOWN_LECTURE_TOOLTIP, false);
+        lecturesTable = new TableView();
+        lecturesBox.getChildren().add(lecturesLabel);
+        lecturesBox.getChildren().add(lecturesToolbar);
+        lecturesBox.getChildren().add(lecturesTable);
+        lecturesBox.getStyleClass().add(CLASS_BORDERED_PANE);
+        
+   
+        lecturesTopicColumn = new TableColumn(COL_TOPICS);
+        lecturesSessionsColumn = new TableColumn(COL_SESSIONS);
+        
+        //Now setup the table columns
+        lecturesTopicColumn.setCellValueFactory(new PropertyValueFactory<String, String>("topic"));
+        lecturesSessionsColumn.setCellValueFactory(new PropertyValueFactory<String, String>("session"));
+        lecturesTable.getColumns().add(lecturesTopicColumn);
+        lecturesTable.getColumns().add(lecturesSessionsColumn);
+        lecturesTable.setItems(dataManager.getCourse().getLectures());
         // NOW LET'S ASSEMBLE ALL THE CONTAINERS TOGETHER
 
         // THIS IS FOR STUFF IN THE TOP OF THE SCHEDULE PANE, WE NEED TO PUT TWO THINGS INSIDE
@@ -633,77 +679,10 @@ public class CSB_GUI implements CourseDataView {
         schedulePane = new VBox();
         schedulePane.getChildren().add(scheduleInfoPane);
         schedulePane.getChildren().add(scheduleItemsBox);
+        schedulePane.getChildren().add(lecturesBox);
         schedulePane.getStyleClass().add(CLASS_BORDERED_PANE);
     }
     
-    // Gene: Initialize the Lecture Items Controls
-   /* private void initLectureItemsControls(){
-         // FOR THE LEFT
-        dateBoundariesPane = new GridPane();
-        dateBoundariesLabel = initGridLabel(dateBoundariesPane, CSB_PropertyType.DATE_BOUNDARIES_LABEL, CLASS_SUBHEADING_LABEL, 0, 0, 1, 1);
-        startDateLabel = initGridLabel(dateBoundariesPane, CSB_PropertyType.STARTING_MONDAY_LABEL, CLASS_PROMPT_LABEL, 0, 1, 1, 1);
-        startDatePicker = initGridDatePicker(dateBoundariesPane, 1, 1, 1, 1);
-        endDateLabel = initGridLabel(dateBoundariesPane, CSB_PropertyType.ENDING_FRIDAY_LABEL, CLASS_PROMPT_LABEL, 0, 2, 1, 1);
-        endDatePicker = initGridDatePicker(dateBoundariesPane, 1, 2, 1, 1);
-
-        // THIS ONE IS ON THE RIGHT
-        lectureDaySelectorPane = new VBox();
-        lectureDaySelectLabel = initChildLabel(lectureDaySelectorPane, CSB_PropertyType.LECTURE_DAY_SELECT_LABEL, CLASS_SUBHEADING_LABEL);
-        mondayCheckBox = initChildCheckBox(lectureDaySelectorPane, CourseSiteExporter.MONDAY_HEADER);
-        tuesdayCheckBox = initChildCheckBox(lectureDaySelectorPane, CourseSiteExporter.TUESDAY_HEADER);
-        wednesdayCheckBox = initChildCheckBox(lectureDaySelectorPane, CourseSiteExporter.WEDNESDAY_HEADER);
-        thursdayCheckBox = initChildCheckBox(lectureDaySelectorPane, CourseSiteExporter.THURSDAY_HEADER);
-        fridayCheckBox = initChildCheckBox(lectureDaySelectorPane, CourseSiteExporter.FRIDAY_HEADER);
-
-        // THIS SPLITS THE TOP
-        splitScheduleInfoPane = new SplitPane();
-        splitScheduleInfoPane.getItems().add(dateBoundariesPane);
-        splitScheduleInfoPane.getItems().add(lectureDaySelectorPane);
-        
-        // NOW THE CONTROLS FOR ADDING SCHEDULE ITEMS
-        scheduleItemsBox = new VBox();
-        scheduleItemsToolbar = new HBox();
-        scheduleItemsLabel = initLabel(CSB_PropertyType.SCHEDULE_ITEMS_HEADING_LABEL, CLASS_SUBHEADING_LABEL);
-        addScheduleItemButton = initChildButton(scheduleItemsToolbar, CSB_PropertyType.ADD_ICON, CSB_PropertyType.ADD_ITEM_TOOLTIP, false);
-        removeScheduleItemButton = initChildButton(scheduleItemsToolbar, CSB_PropertyType.MINUS_ICON, CSB_PropertyType.REMOVE_ITEM_TOOLTIP, false);
-        scheduleItemsTable = new TableView();
-        scheduleItemsBox.getChildren().add(scheduleItemsLabel);
-        scheduleItemsBox.getChildren().add(scheduleItemsToolbar);
-        scheduleItemsBox.getChildren().add(scheduleItemsTable);
-        scheduleItemsBox.getStyleClass().add(CLASS_BORDERED_PANE);
-        
-        // NOW SETUP THE TABLE COLUMNS
-        itemDescriptionsColumn = new TableColumn(COL_DESCRIPTION);
-        itemDatesColumn = new TableColumn(COL_DATE);
-        linkColumn = new TableColumn(COL_LINK);
-        
-        // AND LINK THE COLUMNS TO THE DATA
-        itemDescriptionsColumn.setCellValueFactory(new PropertyValueFactory<String, String>("description"));
-        itemDatesColumn.setCellValueFactory(new PropertyValueFactory<LocalDate, String>("date"));
-        linkColumn.setCellValueFactory(new PropertyValueFactory<URL, String>("link"));
-        scheduleItemsTable.getColumns().add(itemDescriptionsColumn);
-        scheduleItemsTable.getColumns().add(itemDatesColumn);
-        scheduleItemsTable.getColumns().add(linkColumn);
-        scheduleItemsTable.setItems(dataManager.getCourse().getScheduleItems());
-          
-        // NOW LET'S ASSEMBLE ALL THE CONTAINERS TOGETHER
-
-        // THIS IS FOR STUFF IN THE TOP OF THE SCHEDULE PANE, WE NEED TO PUT TWO THINGS INSIDE
-        scheduleInfoPane = new VBox();
-
-        // FIRST OUR SCHEDULE HEADER
-        scheduleInfoHeadingLabel = initChildLabel(scheduleInfoPane, CSB_PropertyType.SCHEDULE_HEADING_LABEL, CLASS_HEADING_LABEL);
-
-        // AND THEN THE SPLIT PANE
-        scheduleInfoPane.getChildren().add(splitScheduleInfoPane);
-
-        // FINALLY, EVERYTHING IN THIS REGION ULTIMATELY GOES INTO schedulePane
-        schedulePane = new VBox();
-        schedulePane.getChildren().add(scheduleInfoPane);
-        schedulePane.getChildren().add(scheduleItemsBox);
-        schedulePane.getStyleClass().add(CLASS_BORDERED_PANE);
-    }
-*/
     // INITIALIZE THE WINDOW (i.e. STAGE) PUTTING ALL THE CONTROLS
     // THERE EXCEPT THE WORKSPACE, WHICH WILL BE ADDED THE FIRST
     // TIME A NEW Course IS CREATED OR LOADED
@@ -823,6 +802,22 @@ public class CSB_GUI implements CourseDataView {
             scheduleController.handleRemoveScheduleItemRequest(this, scheduleItemsTable.getSelectionModel().getSelectedItem());
         });
         
+        // GENE: AND NOW THE LECTURE ADDING AND EDITING CONTROLS
+       addLecturesButton.setOnAction(e -> {
+           scheduleController.handleAddLectureRequest(this);
+       });
+       
+       removeLecturesButton.setOnAction(e -> {
+           scheduleController.handleRemoveLectureRequest(this, lecturesTable.getSelectionModel().getSelectedItem());
+       });
+       moveUpLecturesButton.setOnAction(e -> {
+          // scheduleController.hand
+       });
+       moveDownLecturesButton.setOnAction(e -> {
+           
+       });
+        
+        
         // AND NOW THE SCHEDULE ITEMS TABLE
         scheduleItemsTable.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
@@ -831,7 +826,16 @@ public class CSB_GUI implements CourseDataView {
                 scheduleController.handleEditScheduleItemRequest(this, si);
             }
         });
+        lecturesTable.setOnMouseClicked(e -> {
+            if(e.getClickCount() == 2){
+            //Open up the lecture editor
+            Lecture lect = lecturesTable.getSelectionModel().getSelectedItem();
+            scheduleController.handleEditLecutreRequest(this, lect);
+            }
+        });
+        
     }
+        
 
     // REGISTER THE EVENT LISTENER FOR A TEXT FIELD
     private void registerTextFieldController(TextField textField) {

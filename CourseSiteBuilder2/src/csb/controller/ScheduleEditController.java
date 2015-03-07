@@ -3,8 +3,10 @@ package csb.controller;
 import static csb.CSB_PropertyType.REMOVE_ITEM_MESSAGE;
 import csb.data.Course;
 import csb.data.CourseDataManager;
+import csb.data.Lecture;
 import csb.data.ScheduleItem;
 import csb.gui.CSB_GUI;
+import csb.gui.LectureDialog;
 import csb.gui.MessageDialog;
 import csb.gui.ScheduleItemDialog;
 import csb.gui.YesNoCancelDialog;
@@ -17,11 +19,13 @@ import properties_manager.PropertiesManager;
  */
 public class ScheduleEditController {
     ScheduleItemDialog sid;
+    LectureDialog ld;
     MessageDialog messageDialog;
     YesNoCancelDialog yesNoCancelDialog;
     
     public ScheduleEditController(Stage initPrimaryStage, Course course, MessageDialog initMessageDialog, YesNoCancelDialog initYesNoCancelDialog) {
         sid = new ScheduleItemDialog(initPrimaryStage, course, initMessageDialog);
+        ld = new LectureDialog(initPrimaryStage, course, initMessageDialog);
         messageDialog = initMessageDialog;
         yesNoCancelDialog = initYesNoCancelDialog;
     }
@@ -46,7 +50,24 @@ public class ScheduleEditController {
             // WE DO NOTHING
         }
     }
-    
+    public void handleAddLectureRequest(CSB_GUI gui){
+        CourseDataManager cdm = gui.getDataManager();
+        Course course = cdm.getCourse();
+        ld.showAddLectureDialog();
+        
+        // DID THE USER CONFIRM?
+        if (ld.wasCompleteSelected()) {
+            // GET THE SCHEDULE ITEM
+            Lecture lect = ld.getLecture();
+            
+            // AND ADD IT AS A ROW TO THE TABLE
+            course.addLecture(lect);
+        }
+        else {
+            // THE USER MUST HAVE PRESSED CANCEL, SO
+            // WE DO NOTHING
+        }
+    }
     public void handleEditScheduleItemRequest(CSB_GUI gui, ScheduleItem itemToEdit) {
         CourseDataManager cdm = gui.getDataManager();
         Course course = cdm.getCourse();
@@ -65,7 +86,11 @@ public class ScheduleEditController {
             // WE DO NOTHING
         }        
     }
-    
+    public void handleEditLecutreRequest(CSB_GUI gui, Lecture itemToEdit){
+        CourseDataManager cdm = gui.getDataManager();
+        Course course = cdm.getCourse();
+        ld.showEditLectureDialog(itemToEdit);
+    }
     public void handleRemoveScheduleItemRequest(CSB_GUI gui, ScheduleItem itemToRemove) {
         // PROMPT THE USER TO SAVE UNSAVED WORK
         yesNoCancelDialog.show(PropertiesManager.getPropertiesManager().getProperty(REMOVE_ITEM_MESSAGE));
@@ -78,4 +103,18 @@ public class ScheduleEditController {
             gui.getDataManager().getCourse().removeScheduleItem(itemToRemove);
         }
     }
+    public void handleRemoveLectureRequest(CSB_GUI gui, Lecture itemToRemove){
+        // PROMPT THE USER TO SAVE UNSAVED WORK
+        yesNoCancelDialog.show(PropertiesManager.getPropertiesManager().getProperty(REMOVE_ITEM_MESSAGE));
+   
+        // GET THE USER'S SELECTION
+        String selection = yesNoCancelDialog.getSelection();
+        
+        // IF USER SAYS YES, SAVE BEFORE MOVING ON
+        if(selection.equals(YesNoCancelDialog.YES)){
+            gui.getDataManager().getCourse().removeLecture(itemToRemove);
+        }
+    
+    }
+    
 }
