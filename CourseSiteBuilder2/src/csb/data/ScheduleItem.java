@@ -14,7 +14,7 @@ public class ScheduleItem implements Comparable {
     final StringProperty description;
     final ObjectProperty<LocalDate> date;
     final StringProperty link;
-    public static final String DEFAULT_DESCRIPTION = "<ENTER DESCRIPTION>";
+    public static final String DEFAULT_DESCRIPTION = "<ENTER DESCRIPTION!!!>";
     public static final String DEFAULT_URL = "http://www.google.com";    
     
     public ScheduleItem() {

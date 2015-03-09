@@ -9,6 +9,7 @@ import csb.data.CourseDataView;
 import csb.data.CoursePage;
 import csb.controller.FileController;
 import csb.controller.ScheduleEditController;
+import csb.data.Assignment;
 import csb.data.Instructor;
 import csb.data.Lecture;
 import csb.data.ScheduleItem;
@@ -182,9 +183,6 @@ public class CSB_GUI implements CourseDataView {
     TableColumn itemDatesColumn;
     TableColumn linkColumn;
     
-    
-    
-    
     // Gene: This handles lecture items
     VBox lecturesBox;
     HBox lecturesToolbar;
@@ -199,15 +197,22 @@ public class CSB_GUI implements CourseDataView {
     
     
     
-    
-    
+    VBox assignmentsBox;
+    HBox assignmentsToolbar;
+    Button addAssignmentsButton;
+    Button removeAssignmentsButton;
+    Label assignmentsLabel;
+    TableView<Assignment> assignmentsTable;
+    TableColumn assignmentsNameColumn;
+    TableColumn assignmentsTopicsColumn;
+    TableColumn assignmentsDateColumn;
     
     // AND TABLE COLUMNS
     static final String COL_DESCRIPTION = "Description";
     static final String COL_DATE = "Date";
     static final String COL_LINK = "Link";
     static final String COL_TOPIC = "Topic";
-    static final String COL_SESSIONS = "# of Sessions";
+    static final String COL_SESSIONS = "Number of Sessions";
     static final String COL_NAME = "Name";
     static final String COL_TOPICS = "Topics";
     
@@ -655,15 +660,36 @@ public class CSB_GUI implements CourseDataView {
         lecturesBox.getStyleClass().add(CLASS_BORDERED_PANE);
         
    
-        lecturesTopicColumn = new TableColumn(COL_TOPICS);
+        lecturesTopicColumn = new TableColumn(COL_TOPIC);
         lecturesSessionsColumn = new TableColumn(COL_SESSIONS);
         
         //Now setup the table columns
         lecturesTopicColumn.setCellValueFactory(new PropertyValueFactory<String, String>("topic"));
-        lecturesSessionsColumn.setCellValueFactory(new PropertyValueFactory<String, String>("session"));
+        lecturesSessionsColumn.setCellValueFactory(new PropertyValueFactory<Integer, String>("session"));
         lecturesTable.getColumns().add(lecturesTopicColumn);
         lecturesTable.getColumns().add(lecturesSessionsColumn);
         lecturesTable.setItems(dataManager.getCourse().getLectures());
+        //Now setup the assignment columns
+        assignmentsBox = new VBox();
+        assignmentsToolbar = new HBox();
+        assignmentsLabel = initLabel(CSB_PropertyType.HWS_HEADING_LABEL, CLASS_SUBHEADING_LABEL);
+        addAssignmentsButton = initChildButton(assignmentsToolbar, CSB_PropertyType.ADD_ICON, CSB_PropertyType.ADD_HW_TOOLTIP, false);
+        removeAssignmentsButton = initChildButton(assignmentsToolbar, CSB_PropertyType.MINUS_ICON, CSB_PropertyType.REMOVE_HW_TOOLTIP, false);
+        assignmentsTable = new TableView();
+        assignmentsBox.getChildren().add(assignmentsLabel);
+        assignmentsBox.getChildren().add(assignmentsToolbar);
+        assignmentsBox.getChildren().add(assignmentsTable);
+        assignmentsBox.getStyleClass().add(CLASS_BORDERED_PANE);
+        assignmentsNameColumn = new TableColumn(COL_NAME);
+        assignmentsTopicsColumn = new TableColumn(COL_TOPICS);
+        assignmentsDateColumn = new TableColumn(COL_DATE);
+        assignmentsNameColumn.setCellValueFactory(new PropertyValueFactory<String, String>("name"));
+        assignmentsTopicsColumn.setCellValueFactory(new PropertyValueFactory<String, String>("topics"));
+        assignmentsDateColumn.setCellValueFactory(new PropertyValueFactory<LocalDate, String>("date"));
+        assignmentsTable.getColumns().add(assignmentsNameColumn);
+        assignmentsTable.getColumns().add(assignmentsTopicsColumn);
+        assignmentsTable.getColumns().add(assignmentsDateColumn);
+        assignmentsTable.setItems(dataManager.getCourse().getAssignments());
         // NOW LET'S ASSEMBLE ALL THE CONTAINERS TOGETHER
 
         // THIS IS FOR STUFF IN THE TOP OF THE SCHEDULE PANE, WE NEED TO PUT TWO THINGS INSIDE
@@ -680,6 +706,7 @@ public class CSB_GUI implements CourseDataView {
         schedulePane.getChildren().add(scheduleInfoPane);
         schedulePane.getChildren().add(scheduleItemsBox);
         schedulePane.getChildren().add(lecturesBox);
+        schedulePane.getChildren().add(assignmentsBox);
         schedulePane.getStyleClass().add(CLASS_BORDERED_PANE);
     }
     
@@ -806,7 +833,6 @@ public class CSB_GUI implements CourseDataView {
        addLecturesButton.setOnAction(e -> {
            scheduleController.handleAddLectureRequest(this);
        });
-       
        removeLecturesButton.setOnAction(e -> {
            scheduleController.handleRemoveLectureRequest(this, lecturesTable.getSelectionModel().getSelectedItem());
        });
@@ -816,7 +842,13 @@ public class CSB_GUI implements CourseDataView {
        moveDownLecturesButton.setOnAction(e -> {
            
        });
-        
+       addAssignmentsButton.setOnAction(e -> {
+           scheduleController.handleAddAssignmentRequest(this);
+       });
+       
+       removeAssignmentsButton.setOnAction(e -> {
+           scheduleController.handleRemoveAssignmentRequest(this, assignmentsTable.getSelectionModel().getSelectedItem());
+       });
         
         // AND NOW THE SCHEDULE ITEMS TABLE
         scheduleItemsTable.setOnMouseClicked(e -> {
@@ -830,7 +862,14 @@ public class CSB_GUI implements CourseDataView {
             if(e.getClickCount() == 2){
             //Open up the lecture editor
             Lecture lect = lecturesTable.getSelectionModel().getSelectedItem();
-            scheduleController.handleEditLecutreRequest(this, lect);
+            scheduleController.handleEditLectureRequest(this, lect);
+            }
+        });
+        assignmentsTable.setOnMouseClicked(e -> {
+            if(e.getClickCount() == 2){
+            //Open up the lecture editor
+            Assignment assign = assignmentsTable.getSelectionModel().getSelectedItem();
+            scheduleController.handleEditAssignmentRequest(this, assign);
             }
         });
         
