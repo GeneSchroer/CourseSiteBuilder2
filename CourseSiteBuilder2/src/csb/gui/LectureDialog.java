@@ -38,7 +38,7 @@ public class LectureDialog  extends Stage {
     Label topicLabel;
     TextField topicTextField;
     Label sessionsLabel;
-    int sessionsNum;
+    Integer sessionsNum;
     ComboBox sessionsComboBox;
     Button completeButton;
     Button cancelButton;
@@ -90,10 +90,11 @@ public class LectureDialog  extends Stage {
         sessionsLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
         sessionsComboBox = new ComboBox();
         ObservableList<Integer> numOfSessions = FXCollections.observableArrayList();
-        numOfSessions.addAll(0, 1, 2, 3, 4, 5, 6);
+        //There are a maximum of 7 days in a week, duh.
+        numOfSessions.addAll(0, 1, 2, 3, 4, 5, 6, 7);
         sessionsComboBox.setItems(numOfSessions);
         sessionsComboBox.setOnAction(e -> {
-            sessionsNum = (int)sessionsComboBox.getSelectionModel().getSelectedItem();
+            sessionsNum = (Integer)sessionsComboBox.getSelectionModel().getSelectedItem();
             lecture.setSessions(sessionsNum);
         });
         
@@ -159,7 +160,7 @@ public class LectureDialog  extends Stage {
         
         // AND OPEN IT UP
         this.showAndWait();
-        System.out.println(lecture.getSessions());
+//        System.out.println(lecture.getSessions());
         
         
         return lecture;
@@ -168,9 +169,9 @@ public class LectureDialog  extends Stage {
     public void loadGUIData() {
         // LOAD THE UI STUFF
         topicTextField.setText(lecture.getTopic());
-        
-        sessionsComboBox.getSelectionModel().select(sessionsNum);
-    }
+        sessionsComboBox.getSelectionModel().select(lecture.getSessions());
+       // sessionsNum = (Integer)sessionsComboBox.getSelectionModel().getSelectedItem();
+                }
     
     public boolean wasCompleteSelected() {
         return selection.equals(COMPLETE);
@@ -187,8 +188,8 @@ public class LectureDialog  extends Stage {
         
         // AND THEN INTO OUR GUI
         loadGUIData();
-               
         // AND OPEN IT UP
         this.showAndWait();
+       // sessionsComboBox.
     }
 }

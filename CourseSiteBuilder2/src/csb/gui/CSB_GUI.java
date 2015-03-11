@@ -195,8 +195,6 @@ public class CSB_GUI implements CourseDataView {
     TableColumn lecturesTopicColumn;
     TableColumn lecturesSessionsColumn;
     
-    
-    
     VBox assignmentsBox;
     HBox assignmentsToolbar;
     Button addAssignmentsButton;
@@ -392,11 +390,16 @@ public class CSB_GUI implements CourseDataView {
         fridayCheckBox.setSelected(courseToReload.hasLectureDay(DayOfWeek.FRIDAY));
         
         // THE SCHEDULE ITEMS TABLE
-       
-        // THE LECTURES TABLE
+       //scheduleItemsTable.getItems().clear();
         
+        //scheduleItemsTable.setItems(courseToReload.getScheduleItems());
+        
+        // THE LECTURES TABLE
+       
+        //lecturesTable.setItems(courseToReload.getLectures());
         // THE HWS TABLE
-
+        
+       // assignmentsTable.setItems(courseToReload.getAssignments());
         // NOW WE DO WANT TO RESPOND WHEN THE USER INTERACTS WITH OUR CONTROLS
         courseController.enable(true);
     }
@@ -665,7 +668,7 @@ public class CSB_GUI implements CourseDataView {
         
         //Now setup the table columns
         lecturesTopicColumn.setCellValueFactory(new PropertyValueFactory<String, String>("topic"));
-        lecturesSessionsColumn.setCellValueFactory(new PropertyValueFactory<Integer, String>("session"));
+        lecturesSessionsColumn.setCellValueFactory(new PropertyValueFactory<Integer, String>("sessions"));
         lecturesTable.getColumns().add(lecturesTopicColumn);
         lecturesTable.getColumns().add(lecturesSessionsColumn);
         lecturesTable.setItems(dataManager.getCourse().getLectures());
@@ -679,10 +682,12 @@ public class CSB_GUI implements CourseDataView {
         assignmentsBox.getChildren().add(assignmentsLabel);
         assignmentsBox.getChildren().add(assignmentsToolbar);
         assignmentsBox.getChildren().add(assignmentsTable);
+        
         assignmentsBox.getStyleClass().add(CLASS_BORDERED_PANE);
         assignmentsNameColumn = new TableColumn(COL_NAME);
         assignmentsTopicsColumn = new TableColumn(COL_TOPICS);
         assignmentsDateColumn = new TableColumn(COL_DATE);
+        
         assignmentsNameColumn.setCellValueFactory(new PropertyValueFactory<String, String>("name"));
         assignmentsTopicsColumn.setCellValueFactory(new PropertyValueFactory<String, String>("topics"));
         assignmentsDateColumn.setCellValueFactory(new PropertyValueFactory<LocalDate, String>("date"));
@@ -837,10 +842,40 @@ public class CSB_GUI implements CourseDataView {
            scheduleController.handleRemoveLectureRequest(this, lecturesTable.getSelectionModel().getSelectedItem());
        });
        moveUpLecturesButton.setOnAction(e -> {
-          // scheduleController.hand
+           
+            if(lecturesTable.getSelectionModel().getSelectedItem()!=null){
+                int index = lecturesTable.getSelectionModel().getSelectedIndex();
+           
+                Lecture temp = new Lecture();
+                temp.setSessions(lecturesTable.getItems().get(index).getSessions());
+                temp.setTopic(lecturesTable.getItems().get(index).getTopic());
+           
+                if(index>0){
+                    lecturesTable.getItems().get(index).setSessions(lecturesTable.getItems().get(index-1).getSessions());
+                    lecturesTable.getItems().get(index).setTopic(lecturesTable.getItems().get(index-1).getTopic());
+
+                    lecturesTable.getItems().get(index-1).setSessions(temp.getSessions());
+                    lecturesTable.getItems().get(index-1).setTopic(temp.getTopic());
+                }
+           }
+           //scheduleController.handleMoveUpLectureRequest(this);
        });
        moveDownLecturesButton.setOnAction(e -> {
+           if(lecturesTable.getSelectionModel().getSelectedItem()!=null){
+                int index = lecturesTable.getSelectionModel().getSelectedIndex();
            
+                Lecture temp = new Lecture();
+                temp.setSessions(lecturesTable.getItems().get(index).getSessions());
+                temp.setTopic(lecturesTable.getItems().get(index).getTopic());
+           
+                if(index<lecturesTable.getItems().size()-1){
+                    lecturesTable.getItems().get(index).setSessions(lecturesTable.getItems().get(index+1).getSessions());
+                    lecturesTable.getItems().get(index).setTopic(lecturesTable.getItems().get(index+1).getTopic());
+
+                    lecturesTable.getItems().get(index+1).setSessions(temp.getSessions());
+                    lecturesTable.getItems().get(index+1).setTopic(temp.getTopic());
+                }
+           }
        });
        addAssignmentsButton.setOnAction(e -> {
            scheduleController.handleAddAssignmentRequest(this);
@@ -875,7 +910,6 @@ public class CSB_GUI implements CourseDataView {
         
     }
         
-
     // REGISTER THE EVENT LISTENER FOR A TEXT FIELD
     private void registerTextFieldController(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {

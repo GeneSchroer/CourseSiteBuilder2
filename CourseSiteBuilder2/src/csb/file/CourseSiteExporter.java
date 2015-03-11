@@ -145,12 +145,27 @@ public class CourseSiteExporter {
         }
 
         CoursePage[] pages = CoursePage.values();
+        
+        
+        //Gene: make seperate class later
+/*        boolean hasSched = false;
         for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-            if (courseToExport.hasCoursePage(pages[pageIndex])) {
-                // CALCULATE THE PROGRESS
-                exportPage(pages[pageIndex], courseToExport, courseExportPath);
-            }
+            if(courseToExport.hasCoursePage(CoursePage.SCHEDULE))
+                hasSched = true;
         }
+  */      
+    //    if(hasSched==true){
+            for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                if (courseToExport.hasCoursePage(pages[pageIndex])) {
+                    // CALCULATE THE PROGRESS
+                    exportPage(pages[pageIndex], courseToExport, courseExportPath);
+                }
+            }
+        /*}
+        else{
+            buildSchedulePage(courseToExport);
+        }
+       */ 
     }
 
     /**
@@ -170,7 +185,7 @@ public class CourseSiteExporter {
             // NOW THAT EVERYTHING IS SETUP, BUILD THE PAGE DOCUMENT
             Document doc;
             String pageFile;
-
+            
             if (page == CoursePage.INDEX) {
                 doc = buildIndexPage(courseToExport);
                 pageFile = INDEX_PAGE;

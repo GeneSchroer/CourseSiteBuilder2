@@ -49,6 +49,8 @@ public class ScheduleEditController {
             
             // AND ADD IT AS A ROW TO THE TABLE
             course.addScheduleItem(si);
+            //Update the Toolbar, because this is not saved.
+            gui.updateToolbarControls(false);
         }
         else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
@@ -63,10 +65,14 @@ public class ScheduleEditController {
         // DID THE USER CONFIRM?
         if (ld.wasCompleteSelected()) {
             // GET THE SCHEDULE ITEM
+            
             Lecture lect = ld.getLecture();
             
             // AND ADD IT AS A ROW TO THE TABLE
             course.addLecture(lect);
+            
+            //Update the Toolbar, because this is not saved.
+            gui.updateToolbarControls(false);
         }
         else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
@@ -84,6 +90,8 @@ public class ScheduleEditController {
             
             // AND ADD IT AS A ROW TO THE TABLE
             course.addAssignment(assign);
+            //Update the Toolbar, because this is not saved.
+            gui.updateToolbarControls(false);
         }
         else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
@@ -102,6 +110,8 @@ public class ScheduleEditController {
             itemToEdit.setDescription(si.getDescription());
             itemToEdit.setDate(si.getDate());
             itemToEdit.setLink(si.getLink());
+            //Update the Toolbar, because this is not saved.
+            gui.updateToolbarControls(false);
         }
         else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
@@ -119,6 +129,8 @@ public class ScheduleEditController {
             Lecture lect = ld.getLecture();
             itemToEdit.setTopic(lect.getTopic());
             itemToEdit.setSessions(lect.getSessions());
+            //Update the Toolbar, because this is not saved.
+            gui.updateToolbarControls(false);
         }
         else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
@@ -137,6 +149,8 @@ public class ScheduleEditController {
             itemToEdit.setName(assign.getName());
             itemToEdit.setTopics(assign.getTopics());
             itemToEdit.setDate(assign.getDate());
+            //Update the Toolbar, because this is not saved.
+            gui.updateToolbarControls(false);
         }
         else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
@@ -149,10 +163,14 @@ public class ScheduleEditController {
         
         // AND NOW GET THE USER'S SELECTION
         String selection = yesNoCancelDialog.getSelection();
+        //Update the Toolbar, because this is not saved.
+        gui.updateToolbarControls(false);
 
         // IF THE USER SAID YES, THEN SAVE BEFORE MOVING ON
         if (selection.equals(YesNoCancelDialog.YES)) { 
             gui.getDataManager().getCourse().removeScheduleItem(itemToRemove);
+            //Update the Toolbar, because this is not saved.
+            gui.updateToolbarControls(false);
         }
     }
     public void handleRemoveLectureRequest(CSB_GUI gui, Lecture itemToRemove){
@@ -165,6 +183,9 @@ public class ScheduleEditController {
         // IF USER SAYS YES, SAVE BEFORE MOVING ON
         if(selection.equals(YesNoCancelDialog.YES)){
             gui.getDataManager().getCourse().removeLecture(itemToRemove);
+            //Update the Toolbar, because this is not saved.
+            gui.updateToolbarControls(false);
+            
         }
     
     }
@@ -178,7 +199,20 @@ public class ScheduleEditController {
         // IF USER SAYS YES, SAVE BEFORE MOVING ON
         if(selection.equals(YesNoCancelDialog.YES)){
             gui.getDataManager().getCourse().removeAssignment(itemToRemove);
+            //Update the Toolbar, because this is not saved.
+            gui.updateToolbarControls(false);
         }
+    }
+
+    public void handleMoveDownLectureRequest(CSB_GUI gui) {
+      //  ObservableList<Lectures> temp = gui.lecturesTable.getColumns();
+        
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void handleMoveUpLectureRequest(CSB_GUI gui) {
+     //   gui.lecturesTable.getItems().
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     
