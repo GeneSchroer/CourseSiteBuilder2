@@ -66,7 +66,7 @@ public class CourseSiteExporter {
     public static final String CLASS_HOLIDAY = "holiday";
     public static final String CLASS_LECTURE = "lecture";
     public static final String CLASS_HW = "hw";
-    public static final String CLASS_HWS = "hw";
+    public static final String CLASS_HWS = "hws";
 
     // THIS IS TEXT WE'LL BE ADDING TO OUR PAGE
     public static final String INDEX_HEADER = "Home";
@@ -307,6 +307,8 @@ public class CourseSiteExporter {
         Document hwsDoc = initDoc(courseToExport, CoursePage.HWS, HWS_PAGE);
 
         // MISSING UPDATING THE TABLE
+        fillHWAssignmentsTable(hwsDoc, courseToExport);
+        
 
         // AND RETURN THE FULL PAGE DOM
         return hwsDoc;
@@ -368,10 +370,15 @@ public class CourseSiteExporter {
     // FILLS IN THE SCHEDULE PAGE'S SCHEDULE TABLE
     private void fillScheduleTable(Document scheduleDoc, Course courseToExport) {
         LocalDate countingDate = courseToExport.getStartingMonday().minusDays(0);
+        
+        
+        
         int lectureListSize = courseToExport.getLectures().size();
         int lectureIndex = 0;
         int sessionsLeft;
         int lectureDay = 1; // The lecture number. First lecture is lecture 1
+        
+        
         
         Lecture lecture = courseToExport.getLectures().get(lectureIndex);
         sessionsLeft = lecture.getSessions();
@@ -381,9 +388,14 @@ public class CourseSiteExporter {
 
         while (countingDate.isBefore(courseToExport.getEndingFriday())
                 || countingDate.isEqual(courseToExport.getEndingFriday())) {
-            
-            
-            
+        
+        //Assignments
+       // ObservableList<Assignment> assignmentMappings = courseToExport.getAssignments();
+        HashMap<LocalDate, Assignment> assignmentMappings = courseToExport.getAssignmentMappings();
+        
+        
+        while (countingDate.isBefore(courseToExport.getEndingFriday())
+                || countingDate.isEqual(courseToExport.getEndingFriday())) {
             
             // ADD THE MONDAY-FRIDAY HEADERS            
             // FIRST FOR EACH WEEK MAKE A TABLE ROW            
@@ -403,10 +415,10 @@ public class CourseSiteExporter {
             for (int i = 0; i < 5; i++) {
                 // FIRST ADD THE DAY, GIVING IT AN ID OF THE DATE ITSELF
                 Element dayCell = addDayOfWeekCell(scheduleDoc, dowRowElement, countingDate);
-
+                Element lineBreak = scheduleDoc.createElement(HTML.Tag.BR.toString());
                 // IS THERE A SCHEDULE ITEM FOR THAT DAY?
                 ScheduleItem scheduleItem = scheduleItemMappings.get(countingDate);
-                
+                Assignment assignment = assignmentMappings.get(countingDate);
                 if (scheduleItem != null) {
                     // SET THE DATE TO A HOLDIAY
                     dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HOLIDAY);
@@ -422,21 +434,27 @@ public class CourseSiteExporter {
                     holidayLinkElement.appendChild(linkText);
 
                     // AND NOW ADD 6 LINE BREAKS
-                    for (int brCounter = 0; brCounter < 8; brCounter++) {
-                        Element br = scheduleDoc.createElement(HTML.Tag.BR.toString());
+                    for (int brCounter = 0; brCounter < 4; brCounter++) {
+                       Element br = scheduleDoc.createElement(HTML.Tag.BR.toString());
                         dayCell.appendChild(br);
                     }
                 } 
                 else if (courseToExport.hasLectureDay(countingDate.getDayOfWeek())==true 
                         && lectureIndex < lectureListSize){
                         
-                        dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_LECTURE);
-                        Text lectureLabel = scheduleDoc.createTextNode("Lecture " + lectureDay + ": ");
+                        Element lectureLabel = scheduleDoc.createElement(HTML.Tag.SPAN.toString());
+                        
+                    
                         dayCell.appendChild(lectureLabel);
-                        Element br = scheduleDoc.createElement(HTML.Tag.BR.toString());
-                        dayCell.appendChild(br);
+                        lectureLabel.setTextContent("Lecture " + lectureDay + ": ");
+                        dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
+                        
+                        
                         Text lectureTopic = scheduleDoc.createTextNode(lecture.getTopic());
                         dayCell.appendChild(lectureTopic);
+                        dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
+                        dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
+                        
                         --sessionsLeft;
                         ++lectureDay;
                         if(sessionsLeft == 0)
@@ -455,7 +473,19 @@ public class CourseSiteExporter {
                     // SET THE DATE TO A REGULAR DAY
                     dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
                 }
-
+                if(assignment!=null){
+                        Element hwLabel = scheduleDoc.createElement(HTML.Tag.SPAN.toString());
+                        hwLabel.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HW);
+                        dayCell.appendChild(hwLabel);
+                        hwLabel.setTextContent(assignment.getName() );
+                        dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
+                        Text assignmentDate = scheduleDoc.createTextNode("due @ 11:59pm");
+                        dayCell.appendChild(assignmentDate);
+                        dayCell.appendChild(lineBreak);
+                        
+                        Text assignmentTopics = scheduleDoc.createTextNode("(" + assignment.getTopics() + ")");
+                        dayCell.appendChild(assignmentTopics);
+                    }
                 // FIRST SCHEDULE ITEMS
                 countingDate = countingDate.plusDays(1);
             }
@@ -470,7 +500,7 @@ public class CourseSiteExporter {
 
         }
     }
-
+    }
     // ADDS A DAY OF WEEK CELL TO THE SCHEDULE PAGE SCHEDULE TABLE
     private Element addDayOfWeekCell(Document scheduleDoc, Element tableRow, LocalDate date) {
         // MAKE THE TABLE CELL FOR THIS DATE
@@ -534,6 +564,21 @@ public class CourseSiteExporter {
         }
         return null;
     }
+    private Node getNodeWithClass(Document doc, String tagType, String searchID) {
+        NodeList nodes = doc.getElementsByTagName(tagType);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node testNode = nodes.item(i);
+            Node testAttr = testNode.getAttributes().getNamedItem(HTML.Attribute.CLASS.toString());
+            if (testAttr.getNodeValue().equals(searchID)) {
+                return testNode;
+            }
+        }
+        return null;
+    }
+    
+    
+    
+    
 
     // SAVES THE DOCUMENT OBJECT TO A FILE, WHICH WOULD BE AN HTIM FILE
     private void saveDocument(Document doc, String outputFilePath)
@@ -610,5 +655,47 @@ public class CourseSiteExporter {
         } else {
             return ID_PROJECTS_LINK;
         }
+    }
+    public void fillHWAssignmentsTable(Document doc, Course courseToExport){
+        Node table = getNodeWithClass(doc, HTML.Tag.TABLE.toString(), CLASS_HWS);
+        ObservableList<Assignment> assignList = courseToExport.getAssignments();
+       
+        //for(int i = 0; i<assignList.size();++i){
+        Assignment assignment = assignList.get(0);
+        Element newRow = doc.createElement(HTML.Tag.TR.toString());
+        newRow.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
+        table.appendChild(newRow);
+        
+        Element nameColumn = doc.createElement(HTML.Tag.TD.toString());
+        nameColumn.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
+        newRow.appendChild(nameColumn);
+        nameColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
+        Element nameLabel = doc.createElement(HTML.Tag.A.toString());
+        nameLabel.setTextContent(assignment.getName() + "-" + assignment.getTopics());
+        nameColumn.appendChild(nameLabel);
+        nameColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
+        nameColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
+        
+        Element datesColumn = doc.createElement(HTML.Tag.TD.toString());
+        datesColumn.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
+        newRow.appendChild(datesColumn);
+        datesColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
+        Text datesLabel = doc.createTextNode(assignment.getDate().getDayOfWeek().toString() 
+                + ", " + assignment.getDate().getMonthValue() + "/" + assignment.getDate().getDayOfMonth()
+        + " @ 11:59pm");
+        datesColumn.appendChild(datesLabel);
+        datesColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
+        datesColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
+        
+        
+        Element dueColumn = doc.createElement(HTML.Tag.TD.toString());
+        dueColumn.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
+        newRow.appendChild(dueColumn);
+        dueColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
+        Text dueLabel = doc.createTextNode("TBD");
+        dueColumn.appendChild(dueLabel);
+        dueColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
+        dueColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
+       //}
     }
 }

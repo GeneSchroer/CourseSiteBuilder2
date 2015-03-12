@@ -249,4 +249,21 @@ public class Course {
         }
         return holidayDates;
     }
+    
+    
+    
+    /** Returns the assignment dates for quick lookup
+     *
+     * 
+     * @return 
+     */
+    public HashMap<LocalDate, Assignment> getAssignmentMappings(){
+        HashMap<LocalDate, Assignment> hwDates = new HashMap();
+        for(Assignment assignment : assignments){
+            hwDates.put(assignment.getDate(), assignment);
+        }
+        return hwDates;
+    }
+    
+    
 }

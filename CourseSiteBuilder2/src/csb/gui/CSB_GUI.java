@@ -845,31 +845,17 @@ public class CSB_GUI implements CourseDataView {
            
             if(lecturesTable.getSelectionModel().getSelectedItem()!=null){
                 int index = lecturesTable.getSelectionModel().getSelectedIndex();
-                Lecture temp = new Lecture();
-                temp.setSessions(lecturesTable.getItems().get(index).getSessions());
-                temp.setTopic(lecturesTable.getItems().get(index).getTopic());
-                if(index>0){
-                    dataManager.getCourse().getLectures().set(index, dataManager.getCourse().getLectures().get(index-1));
-                    dataManager.getCourse().getLectures().set(index-1, temp);
+                    scheduleController.handleMoveUpLectureRequest(this, index);
                     lecturesTable.getSelectionModel().selectPrevious();
                 }
-           }
-           //scheduleController.handleMoveUpLectureRequest(this);
-       });
+           });
        moveDownLecturesButton.setOnAction(e -> {
            if(lecturesTable.getSelectionModel().getSelectedItem()!=null){
                 int index = lecturesTable.getSelectionModel().getSelectedIndex();
-                Lecture temp = new Lecture();
-                temp.setSessions(lecturesTable.getItems().get(index).getSessions());
-                temp.setTopic(lecturesTable.getItems().get(index).getTopic());
-           
-                if(index<lecturesTable.getItems().size()-1){
-                    dataManager.getCourse().getLectures().set(index, dataManager.getCourse().getLectures().get(index + 1));
-                    dataManager.getCourse().getLectures().set(index + 1, temp);
+                scheduleController.handleMoveDownLectureRequest(this, index);
                     lecturesTable.getSelectionModel().selectNext();
                 }
-           }
-       });
+           });
        addAssignmentsButton.setOnAction(e -> {
            scheduleController.handleAddAssignmentRequest(this);
        });

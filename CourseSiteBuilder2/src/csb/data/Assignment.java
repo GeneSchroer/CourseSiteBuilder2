@@ -11,8 +11,9 @@ import javafx.beans.property.StringProperty;
 /**
  *
  * @author McKillaGorilla
+ * modified by Gene Schroer (also: McKillaGorilla? You're going with that?)
  */
-public class Assignment {
+public class Assignment implements Comparable {
     final StringProperty name;
     final StringProperty topics;
     final ObjectProperty<LocalDate> date;
@@ -65,5 +66,11 @@ public class Assignment {
     
     public StringProperty topicsProperty() {
         return topics;
+    }
+    
+    @Override
+    public int compareTo(Object obj){
+        Assignment otherItem = (Assignment)obj;
+        return getDate().compareTo(otherItem.getDate());
     }
 }

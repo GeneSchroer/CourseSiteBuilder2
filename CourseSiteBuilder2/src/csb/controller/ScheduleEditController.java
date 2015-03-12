@@ -13,6 +13,7 @@ import csb.gui.MessageDialog;
 import csb.gui.ScheduleItemDialog;
 import csb.gui.YesNoCancelDialog;
 import java.time.LocalDate;
+import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 import properties_manager.PropertiesManager;
 
@@ -129,7 +130,12 @@ public class ScheduleEditController {
             Lecture lect = ld.getLecture();
             itemToEdit.setTopic(lect.getTopic());
             itemToEdit.setSessions(lect.getSessions());
-            //Update the Toolbar, because this is not saved.
+            //Update the Toolbar, because this is not saved.\
+            handleMoveDownLectureRequest(gui, 0);
+            handleMoveUpLectureRequest(gui,1);
+            handleMoveUpLectureRequest(gui, cdm.getCourse().getLectures().size()-1);
+            handleMoveDownLectureRequest(gui, cdm.getCourse().getLectures().size()-2);
+            
             gui.updateToolbarControls(false);
         }
         else {
@@ -149,6 +155,8 @@ public class ScheduleEditController {
             itemToEdit.setName(assign.getName());
             itemToEdit.setTopics(assign.getTopics());
             itemToEdit.setDate(assign.getDate());
+            
+            
             //Update the Toolbar, because this is not saved.
             gui.updateToolbarControls(false);
         }
@@ -203,18 +211,29 @@ public class ScheduleEditController {
             gui.updateToolbarControls(false);
         }
     }
-
-    public void handleMoveDownLectureRequest(CSB_GUI gui) {
-      //  ObservableList<Lectures> temp = gui.lecturesTable.getColumns();
-        
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void handleMoveDownLectureRequest(CSB_GUI gui, int index) {
+        ObservableList<Lecture> list = gui.getDataManager().getCourse().getLectures();
+                
+        Lecture temp = new Lecture();
+        temp.setSessions(list.get(index).getSessions());
+        temp.setTopic(list.get(index).getTopic());
+           
+        if(index<list.size()-1){
+            list.set(index, list.get(index + 1));
+            list.set(index + 1, temp);
+        }
     }
-
-    public void handleMoveUpLectureRequest(CSB_GUI gui) {
-     //   gui.lecturesTable.getItems().
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     
+    public void handleMoveUpLectureRequest(CSB_GUI gui, int index) {
+        
+        ObservableList<Lecture> list = gui.getDataManager().getCourse().getLectures();
+        Lecture temp = new Lecture();
+        temp.setSessions(list.get(index).getSessions());
+        temp.setTopic(list.get(index).getTopic());
+        if(index>0){
+            list.set(index, list.get(index-1));
+            list.set(index-1, temp);
+        }
+    }
     
 }
