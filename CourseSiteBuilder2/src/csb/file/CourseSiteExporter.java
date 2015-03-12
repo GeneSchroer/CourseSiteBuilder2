@@ -659,11 +659,23 @@ public class CourseSiteExporter {
     public void fillHWAssignmentsTable(Document doc, Course courseToExport){
         Node table = getNodeWithClass(doc, HTML.Tag.TABLE.toString(), CLASS_HWS);
         ObservableList<Assignment> assignList = courseToExport.getAssignments();
-       
-        //for(int i = 0; i<assignList.size();++i){
-        Assignment assignment = assignList.get(0);
+        
+        int red = 240;
+        int green = 240;
+        int blue = 255;
+        
+        int darkerColor = 10;
+        
+        
+        
+        
+        for(int i = 0; i<assignList.size();++i){
+        Assignment assignment = assignList.get(i);
+        String backgroundColor = "background-color:rgb("+ red + "," + green + "," + blue + ")";
+        
         Element newRow = doc.createElement(HTML.Tag.TR.toString());
         newRow.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
+        newRow.setAttribute(HTML.Attribute.STYLE.toString(), backgroundColor);
         table.appendChild(newRow);
         
         Element nameColumn = doc.createElement(HTML.Tag.TD.toString());
@@ -678,6 +690,7 @@ public class CourseSiteExporter {
         
         Element datesColumn = doc.createElement(HTML.Tag.TD.toString());
         datesColumn.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
+        
         newRow.appendChild(datesColumn);
         datesColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
         Text datesLabel = doc.createTextNode(assignment.getDate().getDayOfWeek().toString() 
@@ -696,6 +709,10 @@ public class CourseSiteExporter {
         dueColumn.appendChild(dueLabel);
         dueColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
         dueColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
-       //}
+        
+        red -= darkerColor;
+        green -= darkerColor;
+        blue -= (darkerColor/2);
+       }
     }
 }
