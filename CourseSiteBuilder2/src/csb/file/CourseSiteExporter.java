@@ -16,6 +16,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import javafx.collections.ObservableList;
 import javax.swing.text.html.HTML;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -367,11 +368,23 @@ public class CourseSiteExporter {
     // FILLS IN THE SCHEDULE PAGE'S SCHEDULE TABLE
     private void fillScheduleTable(Document scheduleDoc, Course courseToExport) {
         LocalDate countingDate = courseToExport.getStartingMonday().minusDays(0);
-        int lectureCounter = 1;
+        int lectureListSize = courseToExport.getLectures().size();
+        int lectureIndex = 0;
+        int sessionsLeft;
+        int lectureDay = 1; // The lecture number. First lecture is lecture 1
+        
+        Lecture lecture = courseToExport.getLectures().get(lectureIndex);
+        sessionsLeft = lecture.getSessions();
+        
+        ObservableList<Lecture> lectList = courseToExport.getLectures();
         HashMap<LocalDate, ScheduleItem> scheduleItemMappings = courseToExport.getScheduleItemMappings();
 
         while (countingDate.isBefore(courseToExport.getEndingFriday())
                 || countingDate.isEqual(courseToExport.getEndingFriday())) {
+            
+            
+            
+            
             // ADD THE MONDAY-FRIDAY HEADERS            
             // FIRST FOR EACH WEEK MAKE A TABLE ROW            
             Element dowRowHeaderElement = scheduleDoc.createElement(HTML.Tag.TR.toString());
@@ -393,6 +406,7 @@ public class CourseSiteExporter {
 
                 // IS THERE A SCHEDULE ITEM FOR THAT DAY?
                 ScheduleItem scheduleItem = scheduleItemMappings.get(countingDate);
+                
                 if (scheduleItem != null) {
                     // SET THE DATE TO A HOLDIAY
                     dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HOLIDAY);
@@ -412,7 +426,32 @@ public class CourseSiteExporter {
                         Element br = scheduleDoc.createElement(HTML.Tag.BR.toString());
                         dayCell.appendChild(br);
                     }
-                } else {
+                } 
+                else if (courseToExport.hasLectureDay(countingDate.getDayOfWeek())==true 
+                        && lectureIndex < lectureListSize){
+                        
+                        dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_LECTURE);
+                        Text lectureLabel = scheduleDoc.createTextNode("Lecture " + lectureDay + ": ");
+                        dayCell.appendChild(lectureLabel);
+                        Element br = scheduleDoc.createElement(HTML.Tag.BR.toString());
+                        dayCell.appendChild(br);
+                        Text lectureTopic = scheduleDoc.createTextNode(lecture.getTopic());
+                        dayCell.appendChild(lectureTopic);
+                        --sessionsLeft;
+                        ++lectureDay;
+                        if(sessionsLeft == 0)
+                            if( lectureIndex < lectureListSize-1) {
+                            lecture = courseToExport.getLectures().get(++lectureIndex);
+                            sessionsLeft = lecture.getSessions();
+                         
+                            }
+                            else
+                                ++lectureIndex;
+                    }
+                
+                
+                
+                else {
                     // SET THE DATE TO A REGULAR DAY
                     dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
                 }

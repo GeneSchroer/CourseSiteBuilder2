@@ -845,17 +845,13 @@ public class CSB_GUI implements CourseDataView {
            
             if(lecturesTable.getSelectionModel().getSelectedItem()!=null){
                 int index = lecturesTable.getSelectionModel().getSelectedIndex();
-           
                 Lecture temp = new Lecture();
                 temp.setSessions(lecturesTable.getItems().get(index).getSessions());
                 temp.setTopic(lecturesTable.getItems().get(index).getTopic());
-           
                 if(index>0){
-                    lecturesTable.getItems().get(index).setSessions(lecturesTable.getItems().get(index-1).getSessions());
-                    lecturesTable.getItems().get(index).setTopic(lecturesTable.getItems().get(index-1).getTopic());
-
-                    lecturesTable.getItems().get(index-1).setSessions(temp.getSessions());
-                    lecturesTable.getItems().get(index-1).setTopic(temp.getTopic());
+                    dataManager.getCourse().getLectures().set(index, dataManager.getCourse().getLectures().get(index-1));
+                    dataManager.getCourse().getLectures().set(index-1, temp);
+                    lecturesTable.getSelectionModel().selectPrevious();
                 }
            }
            //scheduleController.handleMoveUpLectureRequest(this);
@@ -863,17 +859,14 @@ public class CSB_GUI implements CourseDataView {
        moveDownLecturesButton.setOnAction(e -> {
            if(lecturesTable.getSelectionModel().getSelectedItem()!=null){
                 int index = lecturesTable.getSelectionModel().getSelectedIndex();
-           
                 Lecture temp = new Lecture();
                 temp.setSessions(lecturesTable.getItems().get(index).getSessions());
                 temp.setTopic(lecturesTable.getItems().get(index).getTopic());
            
                 if(index<lecturesTable.getItems().size()-1){
-                    lecturesTable.getItems().get(index).setSessions(lecturesTable.getItems().get(index+1).getSessions());
-                    lecturesTable.getItems().get(index).setTopic(lecturesTable.getItems().get(index+1).getTopic());
-
-                    lecturesTable.getItems().get(index+1).setSessions(temp.getSessions());
-                    lecturesTable.getItems().get(index+1).setTopic(temp.getTopic());
+                    dataManager.getCourse().getLectures().set(index, dataManager.getCourse().getLectures().get(index + 1));
+                    dataManager.getCourse().getLectures().set(index + 1, temp);
+                    lecturesTable.getSelectionModel().selectNext();
                 }
            }
        });

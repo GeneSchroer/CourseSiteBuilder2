@@ -23,7 +23,7 @@ public class Lecture {
     final StringProperty topic;
     final IntegerProperty sessions;
     public static final String DEFAULT_TOPIC = "<ENTER TOPIC>";
-    public static final int DEFAULT_SESSIONS = 0;    
+    public static final int DEFAULT_SESSIONS = 1;    
     
     public Lecture() {
         topic = new SimpleStringProperty(DEFAULT_TOPIC);

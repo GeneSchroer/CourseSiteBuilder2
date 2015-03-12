@@ -91,7 +91,7 @@ public class LectureDialog  extends Stage {
         sessionsComboBox = new ComboBox();
         ObservableList<Integer> numOfSessions = FXCollections.observableArrayList();
         //There are a maximum of 7 days in a week, duh.
-        numOfSessions.addAll(0, 1, 2, 3, 4, 5, 6, 7);
+        numOfSessions.addAll(1, 2, 3, 4, 5, 6, 7);
         sessionsComboBox.setItems(numOfSessions);
         sessionsComboBox.setOnAction(e -> {
             sessionsNum = (Integer)sessionsComboBox.getSelectionModel().getSelectedItem();
@@ -156,7 +156,7 @@ public class LectureDialog  extends Stage {
         // LOAD THE UI STUFF
         topicTextField.setText(lecture.getTopic());
         
-        sessionsComboBox.getSelectionModel().select(lecture.getSessions());
+        sessionsComboBox.getSelectionModel().select(0);
         
         // AND OPEN IT UP
         this.showAndWait();
@@ -169,7 +169,7 @@ public class LectureDialog  extends Stage {
     public void loadGUIData() {
         // LOAD THE UI STUFF
         topicTextField.setText(lecture.getTopic());
-        sessionsComboBox.getSelectionModel().select(lecture.getSessions());
+        sessionsComboBox.getSelectionModel().select(0);
        // sessionsNum = (Integer)sessionsComboBox.getSelectionModel().getSelectedItem();
                 }
     
