@@ -18,15 +18,11 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ProgressDialog implements Runnable{
-        @Override
-        public void run(){
-            ProgressRun runt = new ProgressRun(new Stage());
-        }
-    }
+public class ProgressDialog extends Stage{
+        
 
 
-class ProgressRun extends Stage {
+
     /*public ProgressRun(){
         try {
             Stage primaryStage = new Stage();
@@ -49,9 +45,10 @@ class ProgressRun extends Stage {
 
     
     //public void start(Stage primaryStage) throws Exception {
-    ProgressRun(Stage owner){
+    public ProgressDialog(){
+        Stage stage = new Stage();
         initModality(Modality.WINDOW_MODAL);
-        initOwner(owner);
+        //initOwner(owner);
         Stage primaryStage = new Stage();
         progressLock = new ReentrantLock();
         VBox box = new VBox();
@@ -69,18 +66,70 @@ class ProgressRun extends Stage {
         box.getChildren().add(button);
         box.getChildren().add(processLabel);
         
+        
+        
+        
+        Task<Void> task = new Task<Void>() {
+                    int task = numTasks++;
+                    double max = 200;
+                    double perc;
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            progressLock.lock();
+                        for (int i = 0; i < 200; i++) {
+                            //System.out.println(i);
+                            perc = i/max;
+                            
+                            // THIS WILL BE DONE ASYNCHRONOUSLY VIA MULTITHREADING
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    bar.setProgress(perc);
+                                    indicator.setProgress(perc);
+                                   // processLabel.setText("Task #" + task);
+                                }
+                            });
+
+                            // SLEEP EACH FRAME
+                            //try {
+                                Thread.sleep(10);
+                           // } catch (InterruptedException ie) {
+                          //      ie.printStackTrace();
+                          //  }
+                        }}
+                        finally {
+                                progressLock.unlock();
+                                }
+                        return null;
+                    }
+                };
+                // THIS GETS THE THREAD ROLLING
+                Thread thread = new Thread(task);
+                thread.start();     
+        
         Scene scene = new Scene(box);
         this.setScene(scene);
-        show("");
-        System.out.println("BUtz");
-       // primaryStage.show();
-    }
-    
-    
-    
-    public void show(String s){
         this.showAndWait();
+       // primaryStage.show();
+        
     }
+    
+    public void test(){
+            System.out.print("butts");
+        }
+    public void display(){
+              
+        Platform.runLater(new Runnable(){
+            @Override
+            public void run(){
+                
+                processLabel.setText("Test successful");
+            }
+        
+        });
+    }
+    
    
     
     

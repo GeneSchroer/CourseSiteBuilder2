@@ -20,6 +20,9 @@ import csb.gui.YesNoCancelDialog;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.concurrent.Task;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import properties_manager.PropertiesManager;
@@ -203,15 +206,16 @@ public class FileController {
         String courseURL = exporter.getPageURLPath(courseToExport, CoursePage.SCHEDULE);
         
         // NOW GET THE EXPORTER
-        try {            
-            Thread test = new Thread(new ProgressDialog());
-            test.start();
-            
+        try {
+            ProgressDialog progress = new ProgressDialog();// = new ProgressDialog();
+             exporter.exportCourseSite(courseToExport, progress); 
+             ProgressRun run = new ProgressRun(progress);
+             run.start();
             
            
             
             // AND EXPORT THE COURSE
-            exporter.exportCourseSite(courseToExport);
+            
             
             // AND THEN OPEN UP THE PAGE IN A BROWSER
             Stage webBrowserStage = new Stage();
@@ -344,5 +348,14 @@ public class FileController {
      */
     public boolean isSaved() {
         return saved;
+    }
+}
+class ProgressRun extends Thread{
+    ProgressDialog progress;
+    ProgressRun(ProgressDialog progress){
+        run(progress);
+    }
+    public void run(ProgressDialog progress ){
+        progress.test();
     }
 }

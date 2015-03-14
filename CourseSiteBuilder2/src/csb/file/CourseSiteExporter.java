@@ -7,6 +7,7 @@ import csb.data.CoursePage;
 import csb.data.Instructor;
 import csb.data.Lecture;
 import csb.data.ScheduleItem;
+import csb.gui.ProgressDialog;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -134,7 +135,7 @@ public class CourseSiteExporter {
      * @throws IOException This exception is thrown when a problem occurs
      * creating the course site directory and/or files.
      */
-    public void exportCourseSite(Course courseToExport) throws Exception {
+    public void exportCourseSite(Course courseToExport, ProgressDialog pd) throws Exception {
         // GET THE DIRECTORY TO EXPORT THE SITE
         String courseExportPath = (new File(sitesDir) + SLASH)
                 + courseToExport.getSubject() + courseToExport.getNumber();
@@ -154,6 +155,8 @@ public class CourseSiteExporter {
                     exportPage(pages[pageIndex], courseToExport, courseExportPath);
                 }
             }
+            pd.display();
+            
     }
 
     /**

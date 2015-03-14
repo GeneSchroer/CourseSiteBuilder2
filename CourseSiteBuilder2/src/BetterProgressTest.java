@@ -44,7 +44,7 @@ public class BetterProgressTest extends Application {
         Scene scene = new Scene(box);
         primaryStage.setScene(scene);
 
-        button.setOnAction(e -> {
+      
                 Task<Void> task = new Task<Void>() {
                     int task = numTasks++;
                     double max = 200;
@@ -83,7 +83,7 @@ public class BetterProgressTest extends Application {
                 // THIS GETS THE THREAD ROLLING
                 Thread thread = new Thread(task);
                 thread.start();            
-        });        
+        
         primaryStage.show();
     }
     
