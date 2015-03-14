@@ -148,25 +148,12 @@ public class CourseSiteExporter {
         CoursePage[] pages = CoursePage.values();
         
         
-        //Gene: make seperate class later
-/*        boolean hasSched = false;
-        for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-            if(courseToExport.hasCoursePage(CoursePage.SCHEDULE))
-                hasSched = true;
-        }
-  */      
-    //    if(hasSched==true){
             for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
                 if (courseToExport.hasCoursePage(pages[pageIndex])) {
                     // CALCULATE THE PROGRESS
                     exportPage(pages[pageIndex], courseToExport, courseExportPath);
                 }
             }
-        /*}
-        else{
-            buildSchedulePage(courseToExport);
-        }
-       */ 
     }
 
     /**
@@ -466,9 +453,6 @@ public class CourseSiteExporter {
                             else
                                 ++lectureIndex;
                     }
-                
-                
-                
                 else {
                     // SET THE DATE TO A REGULAR DAY
                     dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
@@ -669,7 +653,7 @@ public class CourseSiteExporter {
         
         
         
-        for(int i = 0; i<assignList.size();++i){
+        for(int i = 0; i<assignList.size();++i, red -= darkerColor, green -= darkerColor, blue -= (darkerColor/2)){
         Assignment assignment = assignList.get(i);
         String backgroundColor = "background-color:rgb("+ red + "," + green + "," + blue + ")";
         
@@ -710,9 +694,6 @@ public class CourseSiteExporter {
         dueColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
         dueColumn.appendChild(doc.createElement(HTML.Tag.BR.toString()));
         
-        red -= darkerColor;
-        green -= darkerColor;
-        blue -= (darkerColor/2);
        }
     }
 }

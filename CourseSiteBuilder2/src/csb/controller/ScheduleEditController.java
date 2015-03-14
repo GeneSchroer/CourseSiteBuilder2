@@ -130,12 +130,8 @@ public class ScheduleEditController {
             Lecture lect = ld.getLecture();
             itemToEdit.setTopic(lect.getTopic());
             itemToEdit.setSessions(lect.getSessions());
+
             //Update the Toolbar, because this is not saved.\
-            handleMoveDownLectureRequest(gui, 0);
-            handleMoveUpLectureRequest(gui,1);
-            handleMoveUpLectureRequest(gui, cdm.getCourse().getLectures().size()-1);
-            handleMoveDownLectureRequest(gui, cdm.getCourse().getLectures().size()-2);
-            
             gui.updateToolbarControls(false);
         }
         else {

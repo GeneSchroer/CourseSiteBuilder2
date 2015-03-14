@@ -55,7 +55,7 @@ public class Lecture {
         sessions.set(initSessions);
     }
     
-    public IntegerProperty linkProperty() {
+    public IntegerProperty sessionsProperty() {
         return sessions;
     }
 }

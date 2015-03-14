@@ -14,6 +14,7 @@ import csb.file.CourseFileManager;
 import csb.file.CourseSiteExporter;
 import csb.gui.CSB_GUI;
 import csb.gui.MessageDialog;
+import csb.gui.ProgressDialog;
 import csb.gui.WebBrowser;
 import csb.gui.YesNoCancelDialog;
 import java.io.File;
@@ -203,6 +204,11 @@ public class FileController {
         
         // NOW GET THE EXPORTER
         try {            
+            Thread test = new Thread(new ProgressDialog());
+            test.start();
+            
+            
+           
             
             // AND EXPORT THE COURSE
             exporter.exportCourseSite(courseToExport);
