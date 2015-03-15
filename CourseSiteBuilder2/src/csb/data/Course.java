@@ -231,6 +231,7 @@ public class Course {
 
     public void addAssignment(Assignment a) {
         assignments.add(a);
+        Collections.sort(assignments);
     }
 
     public ObservableList<Assignment> getAssignments() {

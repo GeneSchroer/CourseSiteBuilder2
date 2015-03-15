@@ -207,15 +207,15 @@ public class FileController {
         
         // NOW GET THE EXPORTER
         try {
-            ProgressDialog progress = new ProgressDialog();// = new ProgressDialog();
-             exporter.exportCourseSite(courseToExport, progress); 
-             ProgressRun run = new ProgressRun(progress);
-             run.start();
             
+             // AND EXPORT THE COURSE
+            
+            exporter.exportCourseSite(courseToExport);
+                     
+           
            
             
-            // AND EXPORT THE COURSE
-            
+           
             
             // AND THEN OPEN UP THE PAGE IN A BROWSER
             Stage webBrowserStage = new Stage();
@@ -352,10 +352,12 @@ public class FileController {
 }
 class ProgressRun extends Thread{
     ProgressDialog progress;
-    ProgressRun(ProgressDialog progress){
-        run(progress);
+    CourseSiteExporter exporter;
+    Course courseToExport;
+    ProgressRun(CourseSiteExporter exporter, Course courseToExport ){
+        run();
     }
     public void run(ProgressDialog progress ){
-        progress.test();
+        //exporter.exportCoursePage(courseToExport);
     }
 }

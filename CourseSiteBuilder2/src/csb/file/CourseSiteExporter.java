@@ -17,7 +17,11 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javax.swing.text.html.HTML;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -104,6 +108,7 @@ public class CourseSiteExporter {
     // FILE IS AND WHERE OUR COURSE SITES WILL BE EXPORTED TO
     String baseDir;
     String sitesDir;
+    ProgressDialog progress;
 
     // WE'LL USE THIS VARIABLE TO KEEP TRACK OF EXPORTING PROGRESS
     double perc = 0;
@@ -122,6 +127,7 @@ public class CourseSiteExporter {
     public CourseSiteExporter(String initBaseDir, String initSitesDir) {
         baseDir = initBaseDir;
         sitesDir = initSitesDir;
+        
     }
 
     /**
@@ -135,8 +141,18 @@ public class CourseSiteExporter {
      * @throws IOException This exception is thrown when a problem occurs
      * creating the course site directory and/or files.
      */
-    public void exportCourseSite(Course courseToExport, ProgressDialog pd) throws Exception {
+    public void exportCourseSite(Course courseToExport) throws Exception {
         // GET THE DIRECTORY TO EXPORT THE SITE
+        
+        Thread run = new Thread(new Runnable(){
+            public void run(){
+                progress = new ProgressDialog(courseToExport.getPages().size());
+            }
+        });
+       
+        Thread thread = new Thread(progress);
+
+        //progress = new ProgressDialog(courseToExport.getPages().size());
         String courseExportPath = (new File(sitesDir) + SLASH)
                 + courseToExport.getSubject() + courseToExport.getNumber();
 
@@ -153,9 +169,12 @@ public class CourseSiteExporter {
                 if (courseToExport.hasCoursePage(pages[pageIndex])) {
                     // CALCULATE THE PROGRESS
                     exportPage(pages[pageIndex], courseToExport, courseExportPath);
+                    
                 }
+                                  //progress.update(pages[pageIndex].name());
+                                 
+                           
             }
-            pd.display();
             
     }
 
@@ -360,20 +379,20 @@ public class CourseSiteExporter {
     // FILLS IN THE SCHEDULE PAGE'S SCHEDULE TABLE
     private void fillScheduleTable(Document scheduleDoc, Course courseToExport) {
         LocalDate countingDate = courseToExport.getStartingMonday().minusDays(0);
+        ObservableList<Lecture> lectList = courseToExport.getLectures();
         
         
-        
-        int lectureListSize = courseToExport.getLectures().size();
+        int lectureListSize = lectList.size();
         int lectureIndex = 0;
         int sessionsLeft;
         int lectureDay = 1; // The lecture number. First lecture is lecture 1
         
         
         
-        Lecture lecture = courseToExport.getLectures().get(lectureIndex);
+        Lecture lecture = lectList.get(lectureIndex);
         sessionsLeft = lecture.getSessions();
         
-        ObservableList<Lecture> lectList = courseToExport.getLectures();
+        
         HashMap<LocalDate, ScheduleItem> scheduleItemMappings = courseToExport.getScheduleItemMappings();
 
         while (countingDate.isBefore(courseToExport.getEndingFriday())
@@ -656,7 +675,8 @@ public class CourseSiteExporter {
         
         
         
-        for(int i = 0; i<assignList.size();++i, red -= darkerColor, green -= darkerColor, blue -= (darkerColor/2)){
+        for(int i = 0; i<assignList.size();
+                ++i, red -= darkerColor, green -= darkerColor, blue -= (darkerColor/2)){
         Assignment assignment = assignList.get(i);
         String backgroundColor = "background-color:rgb("+ red + "," + green + "," + blue + ")";
         

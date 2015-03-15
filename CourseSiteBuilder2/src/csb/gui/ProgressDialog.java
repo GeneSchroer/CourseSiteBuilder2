@@ -18,7 +18,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ProgressDialog extends Stage{
+public class ProgressDialog  implements Runnable{
         
 
 
@@ -35,24 +35,74 @@ public class ProgressDialog extends Stage{
     
     
     
-    
+    boolean die = false;
     ProgressBar bar;
     ProgressIndicator indicator;
     Button button;
     Label processLabel;
     int numTasks = 0;
     ReentrantLock progressLock;
-
-    
+    Stage stage;
+    double increment;
+    double total;
     //public void start(Stage primaryStage) throws Exception {
-    public ProgressDialog(){
+    public ProgressDialog(int i){
+        
+        start();
+        increment = 100/i;
+        total = 0;
+        
+    }        
+   
+    public void update(String name) throws InterruptedException{
+        total += increment;
+      
+         
+        Task<Void> task = new Task<Void>() {
+                    
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                       
+                            
+                            // THIS WILL BE DONE ASYNCHRONOUSLY VIA MULTITHREADING
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    indicator.setProgress(total);
+
+                                   // processLabel.setText("Task #" + task);
+                                }
+                            });
+
+                            // SLEEP EACH FRAME
+                            try {
+                                Thread.sleep(10);
+                            } catch (InterruptedException ie) {
+                                ie.printStackTrace();
+                           }
+                        }
+                        finally {
+                                progressLock.unlock();
+                                }
+                        return null;
+                    }
+                };
+                // THIS GETS THE THREAD ROLLING
+                Thread thread = new Thread(task);
+                thread.start();
+}
+   
+    public void start(){
+        
         Stage stage = new Stage();
-        initModality(Modality.WINDOW_MODAL);
+        progressLock = new ReentrantLock();
+        
+        
+        stage.initModality(Modality.WINDOW_MODAL);
         //initOwner(owner);
-        Stage primaryStage = new Stage();
         progressLock = new ReentrantLock();
         VBox box = new VBox();
-
         HBox toolbar = new HBox();
         bar = new ProgressBar(0);      
         indicator = new ProgressIndicator(0);
@@ -69,7 +119,7 @@ public class ProgressDialog extends Stage{
         
         
         
-        Task<Void> task = new Task<Void>() {
+        /*Task<Void> task = new Task<Void>() {
                     int task = numTasks++;
                     double max = 200;
                     double perc;
@@ -107,30 +157,26 @@ public class ProgressDialog extends Stage{
                 // THIS GETS THE THREAD ROLLING
                 Thread thread = new Thread(task);
                 thread.start();     
-        
-        Scene scene = new Scene(box);
-        this.setScene(scene);
-        this.showAndWait();
-       // primaryStage.show();
-        
+        */
+        Scene scene = new Scene(box, 100, 100);
+        stage.setScene(scene);
+        stage.show();
     }
     
-    public void test(){
-            System.out.print("butts");
-        }
-    public void display(){
-              
-        Platform.runLater(new Runnable(){
-            @Override
-            public void run(){
-                
-                processLabel.setText("Test successful");
-            }
-        
-        });
+    
+    
+    
+    
+    
+    public void finish(){
+        stage.hide();
     }
     
-   
+    public void run(){
+      //update();
+    }
+    
+    
     
     
 }
