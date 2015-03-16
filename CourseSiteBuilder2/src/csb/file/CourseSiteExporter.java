@@ -144,20 +144,6 @@ public class CourseSiteExporter {
     public void exportCourseSite(Course courseToExport) throws Exception {
         // GET THE DIRECTORY TO EXPORT THE SITE
         
-//       Platform.runLater(new Runnable(){
-//            public void run(){
-//                progress = new ProgressDialog(courseToExport.getPages().size());
-//            }
-//        }
-//        
-//        );
-                
-           
-        
-       
-        //Thread thread = new Thread(progress);
-
-        //progress = new ProgressDialog(courseToExport.getPages().size());
         String courseExportPath = (new File(sitesDir) + SLASH)
                 + courseToExport.getSubject() + courseToExport.getNumber();
 
@@ -169,19 +155,18 @@ public class CourseSiteExporter {
 
         CoursePage[] pages = CoursePage.values();
         
-        
-            for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-                if (courseToExport.hasCoursePage(pages[pageIndex])) {
-                    // CALCULATE THE PROGRESS
-                    exportPage(pages[pageIndex], courseToExport, courseExportPath);
-                    
-                }
-                                  //progress.update(pages[pageIndex].name());
-                                 
-                           
+        for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+            if (courseToExport.hasCoursePage(pages[pageIndex])) {
+                // CALCULATE THE PROGRESS
+                exportPage(pages[pageIndex], courseToExport, courseExportPath);
             }
-            
-    }
+        }
+            // My attempt to get the progress bar working
+            // No, it was not worth it. Not worth it at all.
+            Runnable test = new ProgressDialog(courseToExport);
+            Thread thread = new Thread(test);
+            thread.start();
+    }     
 
     /**
      * This function exports the course pages to html files.
@@ -391,15 +376,7 @@ public class CourseSiteExporter {
         int lectIndex = 0; // Keep track of the index of our list
         int sessionsLeft=0; // how many sessions do we have to add?
         int lectureDay = 1; // The lecture number. First lecture is lecture 1
-         Lecture lecture;
-
-//        if(lectSize!=0){
-//        lecture = lectList.get(0);
-//        sessionsLeft = lectList.get(0).getSessions();
-//        }
-        
-        
-       
+        Lecture lecture; //stores current lecture
         
         HashMap<LocalDate, Assignment> assignmentMappings = courseToExport.getAssignmentMappings();
         

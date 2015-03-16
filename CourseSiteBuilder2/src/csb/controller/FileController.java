@@ -208,9 +208,11 @@ public class FileController {
         // NOW GET THE EXPORTER
         try {
             
-             // AND EXPORT THE COURSE
+            // AND EXPORT THE COURSE
             
             exporter.exportCourseSite(courseToExport);
+                   
+            
                      
            
            
