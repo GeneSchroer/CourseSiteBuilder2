@@ -45,7 +45,7 @@ public class BetterProgressTest extends Application {
         primaryStage.setScene(scene);
         
         
-        /*button.setOnAction(e -> {
+        button.setOnAction(e -> {
                 Task<Void> task = new Task<Void>() {
                     int task = numTasks++;
                     double max = 200;
@@ -55,7 +55,6 @@ public class BetterProgressTest extends Application {
                         try {
                             progressLock.lock();
                         for (int i = 0; i < 200; i++) {
-                            System.out.println(i);
                             perc = i/max;
                             
                             // THIS WILL BE DONE ASYNCHRONOUSLY VIA MULTITHREADING
@@ -69,11 +68,11 @@ public class BetterProgressTest extends Application {
                             });
 
                             // SLEEP EACH FRAME
-                            //try {
-                                Thread.sleep(1000);
-                           // } catch (InterruptedException ie) {
-                          //      ie.printStackTrace();
-                          //  }
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException ie) {
+                               ie.printStackTrace();
+                            }
                         }}
                         finally {
                                 progressLock.unlock();
@@ -84,7 +83,7 @@ public class BetterProgressTest extends Application {
                 // THIS GETS THE THREAD ROLLING
                 Thread thread = new Thread(task);
                 thread.start();            
-        });        */
+        });        
         primaryStage.show();
     }
     
