@@ -144,13 +144,18 @@ public class CourseSiteExporter {
     public void exportCourseSite(Course courseToExport) throws Exception {
         // GET THE DIRECTORY TO EXPORT THE SITE
         
-        Thread run = new Thread(new Runnable(){
-            public void run(){
-                progress = new ProgressDialog(courseToExport.getPages().size());
-            }
-        });
+//       Platform.runLater(new Runnable(){
+//            public void run(){
+//                progress = new ProgressDialog(courseToExport.getPages().size());
+//            }
+//        }
+//        
+//        );
+                
+           
+        
        
-        Thread thread = new Thread(progress);
+        //Thread thread = new Thread(progress);
 
         //progress = new ProgressDialog(courseToExport.getPages().size());
         String courseExportPath = (new File(sitesDir) + SLASH)
@@ -315,8 +320,9 @@ public class CourseSiteExporter {
         // GET A NEW DOC
         Document hwsDoc = initDoc(courseToExport, CoursePage.HWS, HWS_PAGE);
 
-        // MISSING UPDATING THE TABLE
-        fillHWAssignmentsTable(hwsDoc, courseToExport);
+        //Fill in the HW table
+        if(!courseToExport.getAssignments().isEmpty())
+            fillHWAssignmentsTable(hwsDoc, courseToExport);
         
 
         // AND RETURN THE FULL PAGE DOM
@@ -380,26 +386,21 @@ public class CourseSiteExporter {
     private void fillScheduleTable(Document scheduleDoc, Course courseToExport) {
         LocalDate countingDate = courseToExport.getStartingMonday().minusDays(0);
         ObservableList<Lecture> lectList = courseToExport.getLectures();
-        
-        
-        int lectureListSize = lectList.size();
-        int lectureIndex = 0;
-        int sessionsLeft;
-        int lectureDay = 1; // The lecture number. First lecture is lecture 1
-        
-        
-        
-        Lecture lecture = lectList.get(lectureIndex);
-        sessionsLeft = lecture.getSessions();
-        
-        
         HashMap<LocalDate, ScheduleItem> scheduleItemMappings = courseToExport.getScheduleItemMappings();
+        int lectSize = lectList.size();
+        int lectIndex = 0; // Keep track of the index of our list
+        int sessionsLeft=0; // how many sessions do we have to add?
+        int lectureDay = 1; // The lecture number. First lecture is lecture 1
+         Lecture lecture;
 
-        while (countingDate.isBefore(courseToExport.getEndingFriday())
-                || countingDate.isEqual(courseToExport.getEndingFriday())) {
+//        if(lectSize!=0){
+//        lecture = lectList.get(0);
+//        sessionsLeft = lectList.get(0).getSessions();
+//        }
         
-        //Assignments
-       // ObservableList<Assignment> assignmentMappings = courseToExport.getAssignments();
+        
+       
+        
         HashMap<LocalDate, Assignment> assignmentMappings = courseToExport.getAssignmentMappings();
         
         
@@ -449,8 +450,11 @@ public class CourseSiteExporter {
                     }
                 } 
                 else if (courseToExport.hasLectureDay(countingDate.getDayOfWeek())==true 
-                        && lectureIndex < lectureListSize){
-                        
+                        && lectIndex < lectSize 
+                        && !lectList.isEmpty()){
+                        lecture = lectList.get(lectIndex);
+                        if(sessionsLeft==0)
+                            sessionsLeft = lecture.getSessions();
                         Element lectureLabel = scheduleDoc.createElement(HTML.Tag.SPAN.toString());
                         
                     
@@ -467,13 +471,12 @@ public class CourseSiteExporter {
                         --sessionsLeft;
                         ++lectureDay;
                         if(sessionsLeft == 0)
-                            if( lectureIndex < lectureListSize-1) {
-                            lecture = courseToExport.getLectures().get(++lectureIndex);
-                            sessionsLeft = lecture.getSessions();
+                            if( lectIndex < lectSize-1) {
+                            lecture = lectList.get(++lectIndex);
                          
                             }
                             else
-                                ++lectureIndex;
+                                ++lectIndex;
                     }
                 else {
                     // SET THE DATE TO A REGULAR DAY
@@ -506,7 +509,7 @@ public class CourseSiteExporter {
 
         }
     }
-    }
+    
     // ADDS A DAY OF WEEK CELL TO THE SCHEDULE PAGE SCHEDULE TABLE
     private Element addDayOfWeekCell(Document scheduleDoc, Element tableRow, LocalDate date) {
         // MAKE THE TABLE CELL FOR THIS DATE

@@ -48,9 +48,16 @@ public class ProgressDialog  implements Runnable{
     //public void start(Stage primaryStage) throws Exception {
     public ProgressDialog(int i){
         
-        start();
-        increment = 100/i;
-        total = 0;
+        Platform.runLater(new Runnable(){
+            public void run(){
+                buildGUI();
+                increment = 100/i;
+                total = 0;
+            }
+        }
+        
+        );
+        
         
     }        
    
@@ -93,7 +100,7 @@ public class ProgressDialog  implements Runnable{
                 thread.start();
 }
    
-    public void start(){
+    public void buildGUI(){
         
         Stage stage = new Stage();
         progressLock = new ReentrantLock();

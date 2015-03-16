@@ -64,7 +64,9 @@ public class CourseDataManager {
         course.setEndingFriday(getNextFriday(nextMonday));
         course.clearLectureDays();
         course.clearPages();
-        
+        course.clearLectures();
+        course.clearHWs();
+        course.clearScheduleItems();
         // AND THEN FORCE THE UI TO RELOAD THE UPDATED COURSE
         view.reloadCourse(course);
     }

@@ -350,14 +350,3 @@ public class FileController {
         return saved;
     }
 }
-class ProgressRun extends Thread{
-    ProgressDialog progress;
-    CourseSiteExporter exporter;
-    Course courseToExport;
-    ProgressRun(CourseSiteExporter exporter, Course courseToExport ){
-        run();
-    }
-    public void run(ProgressDialog progress ){
-        //exporter.exportCoursePage(courseToExport);
-    }
-}
