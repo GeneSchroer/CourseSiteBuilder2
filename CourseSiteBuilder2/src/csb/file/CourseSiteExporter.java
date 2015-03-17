@@ -108,7 +108,7 @@ public class CourseSiteExporter {
     // FILE IS AND WHERE OUR COURSE SITES WILL BE EXPORTED TO
     String baseDir;
     String sitesDir;
-    ProgressDialog progress;
+    
 
     // WE'LL USE THIS VARIABLE TO KEEP TRACK OF EXPORTING PROGRESS
     double perc = 0;
@@ -166,6 +166,7 @@ public class CourseSiteExporter {
             Runnable test = new ProgressDialog(courseToExport);
             Thread thread = new Thread(test);
             thread.start();
+            
     }     
 
     /**

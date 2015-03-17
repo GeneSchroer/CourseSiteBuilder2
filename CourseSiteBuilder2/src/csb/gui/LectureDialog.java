@@ -63,7 +63,7 @@ public class LectureDialog  extends Stage {
     public LectureDialog(Stage primaryStage, Course course,  MessageDialog messageDialog) {       
         // MAKE THIS DIALOG MODAL, MEANING OTHERS WILL WAIT
         // FOR IT WHEN IT IS DISPLAYED
-        initModality(Modality.WINDOW_MODAL);
+        //initModality(Modality.WINDOW_MODAL);
         initOwner(primaryStage);
         
         // FIRST OUR CONTAINER

@@ -2,6 +2,8 @@ package csb.gui;
 
 import csb.data.Course;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
@@ -20,6 +22,7 @@ public class ProgressDialog  implements Runnable{
     Label processLabel;
     ReentrantLock progressLock;
     Stage stage;
+    int index;
     double increment;
     double total;
     int numTasks;
@@ -29,7 +32,7 @@ public class ProgressDialog  implements Runnable{
     // Currently doesn't actually use the course.
     public ProgressDialog(Course course){    
         this.course = course;
-        
+        index = 0;
         progressLock = new ReentrantLock();
         numTasks = course.getPages().size();
         increment = (double)100/numTasks/100;
@@ -50,14 +53,14 @@ public class ProgressDialog  implements Runnable{
         toolbar.getChildren().add(indicator);
         
         processLabel = new Label();
-        processLabel.setFont(new Font("Serif", 26));
+        processLabel.setFont(new Font("Serif", 20));
         
         box.getChildren().add(toolbar);
         box.getChildren().add(processLabel);
         
-        Scene scene = new Scene(box, 150, 100);
+        Scene scene = new Scene(box, 250, 100);
         stage.setScene(scene);
-        stage.showAndWait();
+        stage.show();
     }
     
     // Our run method. Loads up the gui and increments the progress bar.
@@ -73,22 +76,28 @@ public class ProgressDialog  implements Runnable{
                         @Override
                         public void run(){
                             buildGUI();
+                            processLabel.setText("Preparing to load");
                         }
                     });
                     
+                    Thread.sleep(2112);
+                    
                     //Loops a simulation of a progress bar updating
-                    for(int i = 0; i< numTasks+1; ++i){
+                    for(int i = 0; i< numTasks; ++i){
                         Platform.runLater(new Runnable(){
                             @Override
                             public void run(){
-                                   indicator.setProgress(total);
-                                   bar.setProgress(total);
-                                   total += increment;
-                                   //processLabel.setText();
+                                total += increment;
+                                indicator.setProgress(total);
+                                bar.setProgress(total);
+                                   
+                                processLabel.setText(course.getPages().get(index++).name() + " exported");
                             }
                         });
                         try{
+                            Thread.sleep(2112);
                             if (total==1){
+                                
                                  Platform.runLater(new Runnable(){
                                 @Override
                                 public void run(){
@@ -97,7 +106,7 @@ public class ProgressDialog  implements Runnable{
                                  });
                             }
                             //Seriously, this is a great song
-                            Thread.sleep(2112);
+                            
                         }
                         catch (InterruptedException ie) {
                             ie.printStackTrace();
@@ -112,5 +121,10 @@ public class ProgressDialog  implements Runnable{
         };
         Thread t = new Thread(task);
         t.start();
+        try {
+            t.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ProgressDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }           
 }
