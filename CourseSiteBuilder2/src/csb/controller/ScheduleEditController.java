@@ -207,6 +207,20 @@ public class ScheduleEditController {
             gui.updateToolbarControls(false);
         }
     }
+    //Handles moving a lecture up
+    public void handleMoveUpLectureRequest(CSB_GUI gui, int index) {
+        
+        ObservableList<Lecture> list = gui.getDataManager().getCourse().getLectures();
+        Lecture temp = new Lecture();
+        temp.setSessions(list.get(index).getSessions());
+        temp.setTopic(list.get(index).getTopic());
+        if(index>0){
+            list.set(index, list.get(index-1));
+            list.set(index-1, temp);
+        }
+        gui.updateToolbarControls(false);
+    }
+    // Handles moving a lecture down
     public void handleMoveDownLectureRequest(CSB_GUI gui, int index) {
         ObservableList<Lecture> list = gui.getDataManager().getCourse().getLectures();
                 
@@ -218,18 +232,6 @@ public class ScheduleEditController {
             list.set(index, list.get(index + 1));
             list.set(index + 1, temp);
         }
+        gui.updateToolbarControls(false);
     }
-    
-    public void handleMoveUpLectureRequest(CSB_GUI gui, int index) {
-        
-        ObservableList<Lecture> list = gui.getDataManager().getCourse().getLectures();
-        Lecture temp = new Lecture();
-        temp.setSessions(list.get(index).getSessions());
-        temp.setTopic(list.get(index).getTopic());
-        if(index>0){
-            list.set(index, list.get(index-1));
-            list.set(index-1, temp);
-        }
-    }
-    
 }

@@ -388,18 +388,6 @@ public class CSB_GUI implements CourseDataView {
         wednesdayCheckBox.setSelected(courseToReload.hasLectureDay(DayOfWeek.WEDNESDAY));
         thursdayCheckBox.setSelected(courseToReload.hasLectureDay(DayOfWeek.THURSDAY));
         fridayCheckBox.setSelected(courseToReload.hasLectureDay(DayOfWeek.FRIDAY));
-        
-        // THE SCHEDULE ITEMS TABLE
-       //scheduleItemsTable.getItems().clear();
-        
-        //scheduleItemsTable.setItems(courseToReload.getScheduleItems());
-        
-        // THE LECTURES TABLE
-       
-        //lecturesTable.setItems(courseToReload.getLectures());
-        // THE HWS TABLE
-        
-       // assignmentsTable.setItems(courseToReload.getAssignments());
         // NOW WE DO WANT TO RESPOND WHEN THE USER INTERACTS WITH OUR CONTROLS
         courseController.enable(true);
     }

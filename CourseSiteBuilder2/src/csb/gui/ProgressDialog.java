@@ -38,7 +38,7 @@ public class ProgressDialog  implements Runnable{
     
    //Builds the GUI for Progress Dialog
     public void buildGUI(){
-        Stage stage = new Stage();
+        stage = new Stage();
         stage.initModality(Modality.WINDOW_MODAL);
         VBox box = new VBox();
         HBox toolbar = new HBox();
@@ -68,12 +68,15 @@ public class ProgressDialog  implements Runnable{
             protected Void call() throws Exception {
                 try {
                     progressLock.lock();
+                    //Our GUI is built
                     Platform.runLater(new Runnable(){
                         @Override
                         public void run(){
                             buildGUI();
                         }
                     });
+                    
+                    //Loops a simulation of a progress bar updating
                     for(int i = 0; i< numTasks+1; ++i){
                         Platform.runLater(new Runnable(){
                             @Override
@@ -93,7 +96,8 @@ public class ProgressDialog  implements Runnable{
                                 }
                                  });
                             }
-                            Thread.sleep(1199);
+                            //Seriously, this is a great song
+                            Thread.sleep(2112);
                         }
                         catch (InterruptedException ie) {
                             ie.printStackTrace();

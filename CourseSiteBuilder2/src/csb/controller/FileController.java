@@ -211,13 +211,6 @@ public class FileController {
             // AND EXPORT THE COURSE
             
             exporter.exportCourseSite(courseToExport);
-                   
-            
-                     
-           
-           
-            
-           
             
             // AND THEN OPEN UP THE PAGE IN A BROWSER
             Stage webBrowserStage = new Stage();
